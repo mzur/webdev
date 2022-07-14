@@ -8,8 +8,8 @@
    version="1.1"
    id="svg5"
    inkscape:version="1.2 (1:1.2+202206011326+fc4e4096c5)"
-   sodipodi:docname="l1-client-server.svg"
-   inkscape:export-filename="l1-client-server.png"
+   sodipodi:docname="l2-client-server.svg"
+   inkscape:export-filename="l2-client-server.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -28,8 +28,8 @@
      inkscape:document-units="px"
      showgrid="false"
      inkscape:zoom="1.138"
-     inkscape:cx="211.77504"
-     inkscape:cy="308.43585"
+     inkscape:cx="305.79965"
+     inkscape:cy="300.52724"
      inkscape:window-width="2560"
      inkscape:window-height="1406"
      inkscape:window-x="0"
@@ -78,25 +78,6 @@
     </marker>
     <marker
        style="overflow:visible"
-       id="marker6415-20"
-       refX="0"
-       refY="0"
-       orient="auto-start-reverse"
-       inkscape:stockid="Arrow5"
-       markerWidth="5.8874264"
-       markerHeight="6.6094756"
-       viewBox="0 0 5.8874262 6.6094758"
-       inkscape:isstock="true"
-       inkscape:collect="always"
-       preserveAspectRatio="xMidYMid">
-      <path
-         transform="scale(0.5)"
-         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
-         d="m 6,0 c -3,1 -7,3 -9,5 0,0 0,-4 2,-5 -2,-1 -2,-5 -2,-5 2,2 6,4 9,5 z"
-         id="path6413-6" />
-    </marker>
-    <marker
-       style="overflow:visible"
        id="marker6415-2"
        refX="0"
        refY="0"
@@ -116,7 +97,7 @@
     </marker>
     <marker
        style="overflow:visible"
-       id="marker6415-29"
+       id="marker6415-8"
        refX="0"
        refY="0"
        orient="auto-start-reverse"
@@ -131,26 +112,7 @@
          transform="scale(0.5)"
          style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
          d="m 6,0 c -3,1 -7,3 -9,5 0,0 0,-4 2,-5 -2,-1 -2,-5 -2,-5 2,2 6,4 9,5 z"
-         id="path6413-3" />
-    </marker>
-    <marker
-       style="overflow:visible"
-       id="marker6415-2-1"
-       refX="0"
-       refY="0"
-       orient="auto-start-reverse"
-       inkscape:stockid="Arrow5"
-       markerWidth="5.8874264"
-       markerHeight="6.6094756"
-       viewBox="0 0 5.8874262 6.6094758"
-       inkscape:isstock="true"
-       inkscape:collect="always"
-       preserveAspectRatio="xMidYMid">
-      <path
-         transform="scale(0.5)"
-         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
-         d="m 6,0 c -3,1 -7,3 -9,5 0,0 0,-4 2,-5 -2,-1 -2,-5 -2,-5 2,2 6,4 9,5 z"
-         id="path6413-66-9" />
+         id="path6413-8" />
     </marker>
     <marker
        style="overflow:visible"
@@ -169,7 +131,26 @@
          transform="scale(0.5)"
          style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
          d="m 6,0 c -3,1 -7,3 -9,5 0,0 0,-4 2,-5 -2,-1 -2,-5 -2,-5 2,2 6,4 9,5 z"
-         id="path6413-6-7" />
+         id="path6413-6-8" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker6415-6-1"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Arrow5"
+       markerWidth="5.8874264"
+       markerHeight="6.6094756"
+       viewBox="0 0 5.8874262 6.6094758"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="m 6,0 c -3,1 -7,3 -9,5 0,0 0,-4 2,-5 -2,-1 -2,-5 -2,-5 2,2 6,4 9,5 z"
+         id="path6413-8-7" />
     </marker>
   </defs>
   <g
@@ -339,7 +320,7 @@
        id="path2714" />
     <g
        id="g5236"
-       transform="translate(-23.822149,36.653272)">
+       transform="translate(8.8342732,36.653272)">
       <rect
          style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.529166;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
          id="rect759-7"
@@ -362,260 +343,150 @@
            y="113.80589">request</tspan></text>
     </g>
     <g
-       id="g8811">
+       id="g3059"
+       transform="translate(-2.5244209)">
       <rect
          style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.529166;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
          id="rect759-7-7"
-         width="23.541855"
+         width="28.590694"
          height="9.0521202"
-         x="57.628155"
-         y="72.868027"
-         rx="2.6458333"
+         x="90.284576"
+         y="38.502136"
+         rx="2.6458335"
          ry="2.6458333" />
       <text
          xml:space="preserve"
          style="font-size:5.64444px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';stroke-width:0.264583"
-         x="59.266537"
-         y="79.213356"
+         x="91.922958"
+         y="44.847466"
          id="text5218-5"><tspan
            sodipodi:role="line"
            id="tspan5216-9"
            style="font-size:5.64444px;stroke-width:0.264583"
-           x="59.266537"
-           y="79.213356">request</tspan></text>
-    </g>
-    <text
-       xml:space="preserve"
-       style="font-size:5.64444px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';stroke-width:0.264583"
-       x="88.420509"
-       y="76.029297"
-       id="text5218-5-6"><tspan
-         sodipodi:role="line"
-         id="tspan5216-9-1"
-         style="font-size:5.64444px;text-align:center;text-anchor:middle;stroke-width:0.264583"
-         x="88.420509"
-         y="76.029297">read</tspan><tspan
-         sodipodi:role="line"
-         style="font-size:5.64444px;text-align:center;text-anchor:middle;stroke-width:0.264583"
-         x="88.420509"
-         y="83.084846"
-         id="tspan10146">file</tspan></text>
-    <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.529166;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
-       id="rect759-7-2"
-       width="30.791862"
-       height="9.0521202"
-       x="101.30563"
-       y="72.868027"
-       rx="2.6458333"
-       ry="2.6458333" />
-    <g
-       id="g690">
-      <rect
-         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.529166;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
-         id="rect759-7-2-3"
-         width="30.791862"
-         height="9.0521202"
-         x="101.30563"
-         y="72.868027"
-         rx="2.6458333"
-         ry="2.6458333" />
-      <text
-         xml:space="preserve"
-         style="font-size:5.64444px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';stroke-width:0.264583"
-         x="102.944"
-         y="79.213356"
-         id="text5218-8"><tspan
-           sodipodi:role="line"
-           id="tspan5216-97"
-           style="font-size:5.64444px;stroke-width:0.264583"
-           x="102.944"
-           y="79.213356">index.html</tspan></text>
-    </g>
-    <g
-       id="g690-6"
-       transform="translate(0,71.245809)">
-      <rect
-         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.529166;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
-         id="rect759-7-2-3-7"
-         width="30.791862"
-         height="9.0521202"
-         x="101.30563"
-         y="72.868027"
-         rx="2.6458333"
-         ry="2.6458333" />
-      <text
-         xml:space="preserve"
-         style="font-size:5.64444px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';stroke-width:0.264583"
-         x="102.944"
-         y="79.213356"
-         id="text5218-8-5"><tspan
-           sodipodi:role="line"
-           id="tspan5216-97-3"
-           style="font-size:5.64444px;stroke-width:0.264583"
-           x="102.944"
-           y="79.213356">index.html</tspan></text>
+           x="91.922958"
+           y="44.847466">index.php</tspan></text>
     </g>
     <text
        xml:space="preserve"
        style="font-size:2.82222px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';stroke-width:0.264583"
-       x="-126.90478"
-       y="67.659447"
+       x="-135.89777"
+       y="100.31587"
        id="text5218-5-6-4"
        transform="rotate(-90)"><tspan
          sodipodi:role="line"
          id="tspan5216-9-1-90"
          style="font-size:2.82222px;stroke-width:0.264583"
-         x="-126.90478"
-         y="67.659447">http://localhost:8000</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:2.82222px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';stroke-width:0.264583"
-       x="-134.82533"
-       y="151.28265"
-       id="text5218-5-6-4-8"
-       transform="rotate(-90)"><tspan
-         sodipodi:role="line"
-         id="tspan5216-9-1-90-6"
-         style="font-size:2.82222px;stroke-width:0.264583"
-         x="-134.82533"
-         y="151.28265">http://localhost:8000/shroom.jpg</tspan></text>
+         x="-135.89777"
+         y="100.31587">http://localhost:8000?name=Martin</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.79375;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6415)"
-       d="M 69.399084,144.13023 V 85.4202"
+       d="M 102.05551,144.13023 V 85.4202"
        id="path6411" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.79375;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6415-2)"
-       d="M 116.72769,82.202264 V 140.91229"
-       id="path6411-4" />
+       style="fill:none;stroke:#000000;stroke-width:0.793752;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6415-8)"
+       d="M 102.05551,72.720259 V 51.113765"
+       id="path6411-43" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.793748;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6415-20)"
-       d="m 80.987614,77.394088 h 16.85632"
-       id="path6411-89" />
+       style="fill:none;stroke:#000000;stroke-width:0.79375;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6415-2)"
+       d="M 159.21184,82.202264 V 140.91229"
+       id="path6411-4" />
     <g
-       id="g5236-8"
-       transform="translate(60.157219,36.653272)">
+       id="g5236-6"
+       transform="translate(8.8342732,-34.592537)">
       <rect
-         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.529166;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
-         id="rect759-7-4"
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.529166;stroke-dasharray:1.05833, 0.529166;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000"
+         id="rect759-7-1"
          width="23.541855"
          height="9.0521202"
          x="81.450302"
          y="107.46056"
          rx="2.6458333"
          ry="2.6458333" />
-      <text
-         xml:space="preserve"
-         style="font-size:5.64444px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';stroke-width:0.264583"
-         x="83.088684"
-         y="113.80589"
-         id="text5218-50"><tspan
-           sodipodi:role="line"
-           id="tspan5216-3"
-           style="font-size:5.64444px;stroke-width:0.264583"
-           x="83.088684"
-           y="113.80589">request</tspan></text>
     </g>
     <g
-       id="g8811-6"
-       transform="translate(83.979368)">
+       id="g6274"
+       transform="translate(-25.55033,1.1804997)">
       <rect
          style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.529166;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
-         id="rect759-7-7-1"
-         width="23.541855"
+         id="rect759-7-5"
+         width="26.648514"
          height="9.0521202"
-         x="57.628155"
-         y="72.868027"
+         x="171.43791"
+         y="37.091175"
          rx="2.6458333"
          ry="2.6458333" />
       <text
          xml:space="preserve"
          style="font-size:5.64444px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';stroke-width:0.264583"
-         x="59.266537"
-         y="79.213356"
-         id="text5218-5-0"><tspan
+         x="173.07629"
+         y="43.436504"
+         id="text5218-4"><tspan
            sodipodi:role="line"
-           id="tspan5216-9-6"
+           id="tspan5216-7"
            style="font-size:5.64444px;stroke-width:0.264583"
-           x="59.266537"
-           y="79.213356">request</tspan></text>
+           x="173.07629"
+           y="43.436504">response</tspan></text>
+    </g>
+    <g
+       id="g6274-1"
+       transform="translate(-25.550329,107.02266)">
+      <rect
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.529166;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
+         id="rect759-7-5-4"
+         width="26.648514"
+         height="9.0521202"
+         x="171.43791"
+         y="37.091175"
+         rx="2.6458333"
+         ry="2.6458333" />
+      <text
+         xml:space="preserve"
+         style="font-size:5.64444px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';stroke-width:0.264583"
+         x="173.07629"
+         y="43.436504"
+         id="text5218-4-9"><tspan
+           sodipodi:role="line"
+           id="tspan5216-7-2"
+           style="font-size:5.64444px;stroke-width:0.264583"
+           x="173.07629"
+           y="43.436504">response</tspan></text>
+    </g>
+    <g
+       id="g6274-6"
+       transform="translate(-25.55033,35.776852)">
+      <rect
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.529166;stroke-dasharray:1.05833, 0.529166;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000"
+         id="rect759-7-5-5"
+         width="26.648514"
+         height="9.0521202"
+         x="171.43791"
+         y="37.091175"
+         rx="2.6458333"
+         ry="2.6458333" />
     </g>
     <text
        xml:space="preserve"
        style="font-size:5.64444px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';stroke-width:0.264583"
-       x="172.39987"
-       y="76.029297"
-       id="text5218-5-6-32"><tspan
+       x="128.31877"
+       y="40.54129"
+       id="text5218-5-6-5"><tspan
          sodipodi:role="line"
-         id="tspan5216-9-1-0"
+         id="tspan5216-9-1-9"
          style="font-size:5.64444px;text-align:center;text-anchor:middle;stroke-width:0.264583"
-         x="172.39987"
-         y="76.029297">read</tspan><tspan
+         x="128.31877"
+         y="40.54129">process</tspan><tspan
          sodipodi:role="line"
          style="font-size:5.64444px;text-align:center;text-anchor:middle;stroke-width:0.264583"
-         x="172.39987"
-         y="83.084846"
-         id="tspan10146-6">file</tspan></text>
-    <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.529166;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
-       id="rect759-7-2-1"
-       width="30.791862"
-       height="9.0521202"
-       x="185.28499"
-       y="72.868027"
-       rx="2.6458333"
-       ry="2.6458333" />
-    <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.529166;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
-       id="rect759-7-2-3-5"
-       width="32.389088"
-       height="9.0521202"
-       x="185.285"
-       y="72.868027"
-       rx="2.6458335"
-       ry="2.6458333" />
-    <text
-       xml:space="preserve"
-       style="font-size:5.64444px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';stroke-width:0.264583"
-       x="186.92336"
-       y="79.213356"
-       id="text5218-8-4"><tspan
-         sodipodi:role="line"
-         id="tspan5216-97-7"
-         style="font-size:5.64444px;stroke-width:0.264583"
-         x="186.92336"
-         y="79.213356">shroom.jpg</tspan></text>
-    <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.529166;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
-       id="rect759-7-2-3-5-3"
-       width="32.802059"
-       height="9.0521202"
-       x="185.285"
-       y="144.11383"
-       rx="2.6458335"
-       ry="2.6458333" />
-    <text
-       xml:space="preserve"
-       style="font-size:5.64444px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';stroke-width:0.264583"
-       x="186.92336"
-       y="150.45917"
-       id="text5218-8-4-0"><tspan
-         sodipodi:role="line"
-         id="tspan5216-97-7-7"
-         style="font-size:5.64444px;stroke-width:0.264583"
-         x="186.92336"
-         y="150.45917">shroom.jpg</tspan></text>
+         x="128.31877"
+         y="47.59684"
+         id="tspan8874">request</tspan></text>
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.79375;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6415-29)"
-       d="M 153.37846,144.13023 V 85.4202"
-       id="path6411-5" />
+       style="fill:none;stroke:#000000;stroke-width:0.793752;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6415-6-1)"
+       d="M 159.21183,47.452058 V 69.613045"
+       id="path6411-84-2" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.79375;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6415-2-1)"
-       d="M 201.47956,82.202264 V 140.91229"
-       id="path6411-4-7" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:0.793748;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6415-20-4)"
-       d="M 164.96698,77.394088 H 181.8233"
-       id="path6411-89-4" />
+       style="fill:none;stroke:#000000;stroke-width:0.793747;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6415-20-4)"
+       d="m 116.64654,42.797735 h 25.76464"
+       id="path6411-89-7" />
   </g>
 </svg>
