@@ -29,7 +29,7 @@
      showgrid="false"
      inkscape:zoom="1.138"
      inkscape:cx="211.77504"
-     inkscape:cy="307.55711"
+     inkscape:cy="307.55712"
      inkscape:window-width="2560"
      inkscape:window-height="1406"
      inkscape:window-x="0"
@@ -491,14 +491,14 @@
        xml:space="preserve"
        style="font-size:2.82222px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';stroke-width:0.264583"
        x="-134.82533"
-       y="145.47604"
+       y="151.28265"
        id="text5218-5-6-4-8"
        transform="rotate(-90)"><tspan
          sodipodi:role="line"
          id="tspan5216-9-1-90-6"
          style="font-size:2.82222px;stroke-width:0.264583"
          x="-134.82533"
-         y="145.47604">http://localhost:8000/shroom.jpg</tspan></text>
+         y="151.28265">http://localhost:8000/shroom.jpg</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.79375;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6415)"
        d="M 69.399084,144.13023 V 85.4202"
@@ -513,7 +513,7 @@
        id="path6411-89" />
     <g
        id="g5236-8"
-       transform="translate(54.350602,36.653272)">
+       transform="translate(60.157219,36.653272)">
       <rect
          style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.529166;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
          id="rect759-7-4"
@@ -537,7 +537,7 @@
     </g>
     <g
        id="g8811-6"
-       transform="translate(78.172751)">
+       transform="translate(83.979368)">
       <rect
          style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.529166;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
          id="rect759-7-7-1"
@@ -562,17 +562,17 @@
     <text
        xml:space="preserve"
        style="font-size:5.64444px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';stroke-width:0.264583"
-       x="166.59326"
+       x="172.39987"
        y="76.029297"
        id="text5218-5-6-32"><tspan
          sodipodi:role="line"
          id="tspan5216-9-1-0"
          style="font-size:5.64444px;text-align:center;text-anchor:middle;stroke-width:0.264583"
-         x="166.59326"
+         x="172.39987"
          y="76.029297">read</tspan><tspan
          sodipodi:role="line"
          style="font-size:5.64444px;text-align:center;text-anchor:middle;stroke-width:0.264583"
-         x="166.59326"
+         x="172.39987"
          y="83.084846"
          id="tspan10146-6">file</tspan></text>
     <rect
@@ -580,68 +580,61 @@
        id="rect759-7-2-1"
        width="30.791862"
        height="9.0521202"
-       x="179.47838"
+       x="185.28499"
        y="72.868027"
        rx="2.6458333"
        ry="2.6458333" />
-    <g
-       id="g1414">
-      <rect
-         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.529166;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
-         id="rect759-7-2-3-5"
-         width="40.139359"
-         height="9.0521202"
-         x="179.47839"
-         y="72.868027"
-         rx="2.6458335"
-         ry="2.6458333" />
-      <text
-         xml:space="preserve"
-         style="font-size:5.64444px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';stroke-width:0.264583"
-         x="181.11674"
-         y="79.213356"
-         id="text5218-8-4"><tspan
-           sodipodi:role="line"
-           id="tspan5216-97-7"
-           style="font-size:5.64444px;stroke-width:0.264583"
-           x="181.11674"
-           y="79.213356">mushroom.jpg</tspan></text>
-    </g>
-    <g
-       id="g1414-4"
-       transform="translate(0,71.245809)">
-      <rect
-         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.529166;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
-         id="rect759-7-2-3-5-3"
-         width="40.139359"
-         height="9.0521202"
-         x="179.47839"
-         y="72.868027"
-         rx="2.6458335"
-         ry="2.6458333" />
-      <text
-         xml:space="preserve"
-         style="font-size:5.64444px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';stroke-width:0.264583"
-         x="181.11674"
-         y="79.213356"
-         id="text5218-8-4-0"><tspan
-           sodipodi:role="line"
-           id="tspan5216-97-7-7"
-           style="font-size:5.64444px;stroke-width:0.264583"
-           x="181.11674"
-           y="79.213356">mushroom.jpg</tspan></text>
-    </g>
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.529166;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
+       id="rect759-7-2-3-5"
+       width="32.389088"
+       height="9.0521202"
+       x="185.285"
+       y="72.868027"
+       rx="2.6458335"
+       ry="2.6458333" />
+    <text
+       xml:space="preserve"
+       style="font-size:5.64444px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';stroke-width:0.264583"
+       x="186.92336"
+       y="79.213356"
+       id="text5218-8-4"><tspan
+         sodipodi:role="line"
+         id="tspan5216-97-7"
+         style="font-size:5.64444px;stroke-width:0.264583"
+         x="186.92336"
+         y="79.213356">shroom.jpg</tspan></text>
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0.529166;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
+       id="rect759-7-2-3-5-3"
+       width="32.802059"
+       height="9.0521202"
+       x="185.285"
+       y="144.11383"
+       rx="2.6458335"
+       ry="2.6458333" />
+    <text
+       xml:space="preserve"
+       style="font-size:5.64444px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';stroke-width:0.264583"
+       x="186.92336"
+       y="150.45917"
+       id="text5218-8-4-0"><tspan
+         sodipodi:role="line"
+         id="tspan5216-97-7-7"
+         style="font-size:5.64444px;stroke-width:0.264583"
+         x="186.92336"
+         y="150.45917">shroom.jpg</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.79375;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6415-29)"
-       d="M 147.57184,144.13023 V 85.4202"
+       d="M 153.37846,144.13023 V 85.4202"
        id="path6411-5" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.79375;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6415-2-1)"
-       d="M 199.54807,82.202264 V 140.91229"
+       d="M 201.47956,82.202264 V 140.91229"
        id="path6411-4-7" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.793748;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6415-20-4)"
-       d="m 159.16036,77.394088 h 16.85632"
+       d="M 164.96698,77.394088 H 181.8233"
        id="path6411-89-4" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.793749;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6415-20-5)"

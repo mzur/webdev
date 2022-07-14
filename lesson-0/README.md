@@ -10,4 +10,4 @@ This typical interaction between client and server is illustrated below:
 
 Over the next three lessons you will learn to set up a web server to respond with static files, then implement a simple server-side application in PHP and finally take a look at client-side applications with JavaScript.
 
-**Next lesson:** [Lesson 1: Static Files](/lesson-1)
+**Next lesson:** [Static Files](/lesson-1)
