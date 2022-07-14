@@ -9,6 +9,9 @@
    id="svg5"
    inkscape:version="1.2 (1:1.2+202206011326+fc4e4096c5)"
    sodipodi:docname="l0-client-server.svg"
+   inkscape:export-filename="l0-client-server.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -24,9 +27,9 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
      showgrid="false"
-     inkscape:zoom="1.138"
-     inkscape:cx="378.73462"
-     inkscape:cy="314.58699"
+     inkscape:zoom="3.2187501"
+     inkscape:cx="202.87378"
+     inkscape:cy="447.68931"
      inkscape:window-width="2560"
      inkscape:window-height="1406"
      inkscape:window-x="0"
@@ -205,6 +208,25 @@
          style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
          d="m 6,0 c -3,1 -7,3 -9,5 0,0 0,-4 2,-5 -2,-1 -2,-5 -2,-5 2,2 6,4 9,5 z"
          id="path6413-66-2" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="marker6415-20-5"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Arrow5"
+       markerWidth="5.8874264"
+       markerHeight="6.6094756"
+       viewBox="0 0 5.8874262 6.6094758"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="m 6,0 c -3,1 -7,3 -9,5 0,0 0,-4 2,-5 -2,-1 -2,-5 -2,-5 2,2 6,4 9,5 z"
+         id="path6413-6-3" />
     </marker>
   </defs>
   <g
@@ -710,8 +732,23 @@
        d="m 80.987614,77.394088 h 16.85632"
        id="path6411-89" />
     <path
+       style="fill:none;stroke:#000000;stroke-width:0.793749;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6415-20-5)"
+       d="M 43.472686,148.6399 H 54.490524"
+       id="path6411-89-5" />
+    <path
        style="fill:none;stroke:#000000;stroke-width:0.793747;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker6415-20-4)"
        d="m 157.74588,43.049439 h 25.76464"
        id="path6411-89-7" />
+    <text
+       xml:space="preserve"
+       style="font-size:5.64444px;line-height:1.25;font-family:'Fira Sans';-inkscape-font-specification:'Fira Sans';stroke-width:0.264583"
+       x="29.888651"
+       y="150.71706"
+       id="text5218-5-6-3"><tspan
+         sodipodi:role="line"
+         style="font-size:5.64444px;text-align:center;text-anchor:middle;stroke-width:0.264583"
+         x="29.888651"
+         y="150.71706"
+         id="tspan10146-7">start here</tspan></text>
   </g>
 </svg>
