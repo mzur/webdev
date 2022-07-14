@@ -6,7 +6,7 @@ In a normal interaction between client and server, the client sends an HTTP requ
 
 This typical interaction between client and server is illustrated below:
 
-![client server interaction](l0-client-server.svg)
+![client server interaction](l0-client-server.png)
 
 Over the next three lessons you will learn to set up a web server to respond with static files, then implement a simple server-side application in PHP and finally take a look at client-side applications with JavaScript.
 
