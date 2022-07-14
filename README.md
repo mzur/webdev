@@ -4,7 +4,29 @@ This is a series of practical lessons for web application development. The goal 
 
 Please work through the lessons in order, as each lesson builds upon the previous lessons. At the end you will build a basic web application with user accounts, persistent storage in a database and an interactive user interface for basic image annotation.
 
+## Preparation
+
+All instructions are written to be performed on a Linux command line (e.g. Ubuntu). They should also work fine on a Mac. If you use Windows, you could try to use the [WSL](https://docs.microsoft.com/en-us/windows/wsl/install).
+
+The practical lessons require PHP >=8.0 installed on your system. To install it on Ubuntu 22.04, run:
+
+```
+sudo apt update
+sudo apt install php-cli
+```
+
 ## Lessons
 
-- [Lesson 0: Web Application Fundamentals](lesson-0)
-- [Lesson 1: Static files](lesson-1)
+- [**Lesson 0:** Web Application Fundamentals](lesson-0)
+
+- [**Lesson 1:** Static Files](lesson-1)
+
+- [**Lesson 2:** Server-Side Application with PHP](lesson-2)
+
+- [**Lesson 3:** Client-Side Application with JavaScript](lesson-3)
+
+- [**Lesson 4:** CSS (interlude)](lesson-4)
+
+- [**Lesson 5:** Setting up a Full Laravel Application](lesson-5)
+
+- [**Lesson 6:** Implementing a Basic Image Annotation Tool](lesson-6)
