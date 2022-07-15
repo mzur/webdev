@@ -30,3 +30,7 @@ sudo apt install php-cli
 - [**Lesson 5:** A Full Laravel Application](lesson-5)
 
 - [**Lesson 6:** A Basic Image Annotation Tool](lesson-6)
+
+## License
+
+This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
