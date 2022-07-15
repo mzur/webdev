@@ -21,12 +21,12 @@ sudo apt install php-cli
 
 - [**Lesson 1:** Static Files](lesson-1)
 
-- [**Lesson 2:** Server-Side Application with PHP](lesson-2)
+- [**Lesson 2:** A Server-Side Application with PHP](lesson-2)
 
-- [**Lesson 3:** Client-Side Application with JavaScript](lesson-3)
+- [**Lesson 3:** A Client-Side Application with JavaScript](lesson-3)
 
 - [**Lesson 4:** CSS (interlude)](lesson-4)
 
-- [**Lesson 5:** Setting up a Full Laravel Application](lesson-5)
+- [**Lesson 5:** A Full Laravel Application](lesson-5)
 
-- [**Lesson 6:** Implementing a Basic Image Annotation Tool](lesson-6)
+- [**Lesson 6:** A Basic Image Annotation Tool](lesson-6)

@@ -52,4 +52,4 @@ This time, the web browser will automatically send a second HTTP request to fetc
 
 Now we have the communication between web server and web browser figured out, we can start to implement an actual web application that can produce dynamic responses.
 
-**Next lesson:** [Server-Side Application with PHP](/lesson-2)
+**Next lesson:** [A Server-Side Application with PHP](/lesson-2)
