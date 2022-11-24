@@ -26,7 +26,7 @@ For now, the content should look exactly as before if you open the document in y
 
 - `htmlspecialchars()` is a function that escapes special HTML characters so people cannot construct a malicious query string (e.g. one that loads an invisible tracking script). This is a security best practice but we don't need to care about this any more once we start using Laravel as a full web application framework.
 
-Now open <http://localhost:8000?name=Martin> and see your web application in action! You can request the same file with different query arguments to get different responses. That's the switch from a static website to a dynamic web application.
+Now open <http://localhost:8000?name=buddy> and see your web application in action! You can request the same file with different query arguments to get different responses. That's the switch from a static website to a dynamic web application.
 
 The client-server communication now looks like this:
 
