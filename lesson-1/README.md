@@ -9,7 +9,7 @@ mkdir webdev
 cd webdev
 ```
 
-Next, copy a nice image into this directory. If you do not have one yourself, take [a shroom](shroom.jpg).
+Next, copy a nice image into this directory. If you do not have one yourself, take [a shroom 🍄](shroom.jpg).
 
 Now we can start the web server:
 
