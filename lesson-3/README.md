@@ -74,7 +74,7 @@ echo json_encode($response);
 
 This file looks a little different than the PHP file of [lesson 2](/lesson-2). It doesn't contain any HTML and has no `?>` closing tag. PHP-only files like these are what you will typically see in a PHP application. Here we create a new `$response` array that contains the name from the query parameters (or the fallback). The script passes the array through `json_encode` which will produce a [JSON](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/JSON) string that is returned as output by `echo`. JSON is a widely used file format that both PHP and JavaScript support.
 
-We can now test the API script by opening <http://localhost:8000/api.php?name=Martin>.
+We can now test the API script by opening <http://localhost:8000/api.php?name=buddy>.
 
 Next, we update the JavaScript code to perform an HTTP request to the API "in the background" without reloading the page:
 
