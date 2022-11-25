@@ -318,6 +318,6 @@ Time: 00:00.131, Memory: 26.00 MB
 OK (6 tests, 10 assertions)
 ```
 
-Now you should probably sit down and reed a little more about [Laravel](https://laravel.com/docs) and [Vue](https://vuejs.org/guide/introduction.html) in their documentation. You can also experiment a little more with your new appplication and the tests. Next up we will build a real application, so bring some time and snacks!
+Now you should probably sit down and reed a little more about [Laravel](https://laravel.com/docs) and [Vue](https://vuejs.org/guide/introduction.html) in their documentation. You can also experiment a little more with your new appplication and the tests. Next up we will build a real application, so bring some time and snacks! 🍿
 
 **Next lesson:** [A Basic Image Annotation Tool](/lesson-6)
