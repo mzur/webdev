@@ -2,7 +2,7 @@
 
 Laravel is an "enterprise-level" PHP web application framework. The term "enterprise" is not always used with a positive meaning in the context of software (since you don't need complicated solutions for simple problems). But the way Laravel works makes it suitable for applications that are deployed on a large scale while still being approachable by newcomers. You don't need to understand all the details at first and you can trust that the framework does the right thing by default. This is particularly important for web applications, as there are lots of things that can be done wrong when it comes to security.
 
-Developing with a framework such as Laravel is like playing a good game: it's easy to start but hard to master. Because of the nature of a web application and the many features that Laravel provides, it's impossible to understand everything in-depth when you are a beginner. But the good thing is that you don't need to understand everything in-depth to start getting productive. And that's wat we are going to do here, too. The [Laravel documentation](https://laravel.com/docs) is an excellent resource but you should not read past "The Basics" before you start developing. Everything else can be looked up afterwards when you need a particular feature during development.
+Developing with a framework such as Laravel is like playing a good game: it's easy to start but hard to master. Because of the nature of a web application and the many features that Laravel provides, it's impossible to understand everything in-depth when you are a beginner. But the good thing is that you don't need to understand everything in-depth to start getting productive. And that's what we are going to do here, too. The [Laravel documentation](https://laravel.com/docs) is an excellent resource but you should not read past "The Basics" before you start developing. Everything else can be looked up afterwards when you need a particular feature during development.
 
 Now we will start to set up a new Laravel project and the basic user interface scaffolding that you can get without having to implement anything yourself. Then we will recreate [lesson 2](/lesson-2) and [lesson 3](/lesson-3) using Laravel and Vue.js so you can see the differences and benefits of these frameworks to the vanilla approach.
 
@@ -18,7 +18,7 @@ Now a new Laravel project is installed in the `example-app` directory. You can g
 
 ## User Interface Scaffolding
 
-Of yourse we don't want to keep just the Laravel start page but implement our own user interface for our application. In addition, most web applications share common features such as user accounts, registration, sign-up, email validation, passwort resets etc. Laravel provides all this fully configured in a variety of [Starter Kits](https://laravel.com/docs/starter-kits). Unfortunately, Laravel uses the [Tailwind CSS](https://tailwindcss.com) framework by default, nowadays, which is great but not very beginner friendly. Fortunately, [Laravel UI](https://github.com/laravel/ui) still exists as an alternative that uses the Bootstrap CSS framework that you already know from [lesson 4](/lesson-4). So this is what we are going to use.
+Of course we don't want to keep just the Laravel start page but implement our own user interface for our application. In addition, most web applications share common features such as user accounts, registration, sign-up, email validation, password resets etc. Laravel provides all this fully configured in a variety of [Starter Kits](https://laravel.com/docs/starter-kits). Unfortunately, Laravel uses the [Tailwind CSS](https://tailwindcss.com) framework by default, nowadays, which is great but not very beginner friendly. Fortunately, [Laravel UI](https://github.com/laravel/ui) still exists as an alternative that uses the Bootstrap CSS framework that you already know from [lesson 4](/lesson-4). So this is what we are going to use.
 
 First, we have to install the Laravel UI package using Composer:
 
@@ -136,7 +136,7 @@ As this is the first time we write an actual PHP class, we'll quickly step throu
 
 - `namespace ...` defines the "full path" to the class name, which is `App\Http\Controllers\Api\QuoteController`. This _must_ be reflected by the actual file path `app/Http/Controllers/Api/QuoteController.php`, as the namespace and class name is used to define which file must be opened to initialize the class when it is used.
 
-- `use ...` statemets define the full paths to other classes that are not within the same namespace of the current class.
+- `use ...` statements define the full paths to other classes that are not within the same namespace of the current class.
 
 - `class QuoteController extends Controller` begins the class definition of a new controller, which extends the default controller class that already includes some helpful methods.
 
@@ -191,3 +191,133 @@ You can press the button multiple times and get a new quote each time. To observ
 As with Laravel, we can't get into great detail about Vue here. You should read the Introduction and Essentials of the [Vue documentation](https://vuejs.org/guide/introduction.html) before you continue to the next lesson.
 
 ## Tests
+
+Tests are crucial when you start to implement a new application that should be maintained for a long time. It may seem cumbersome at first because you appear to write lots of code that does not add any features but you'll be thankful for this in a few months or years! Also think about new developers who join or take over a project and who can't know the consequences of the changes they make to the code. Tests for the rescue!
+
+Here comes my personal opinion about testing a Laravel web application:
+
+> Laravel suggests that you separate tests into Feature tests and Unit tests. I don't do this separation and just write "tests" for each backend class. This could be both unit tests (i.e. testing a single method of a class directly) or feature tests (i.e. testing an API route that is handled by a controller method) in the same file. I strive to fully test the backend and especially the API. Frontend tests, however, are only viable for larger teams, in my opinion. As long as the backend is fully tested, even if the frontend breaks, nothing bad can happen (e.g. database corruption, authentication or authorization failures).
+
+Tests are often omitted from tutorials like these but they are an important part of learning web development. The default Laravel setup already includes a test setup as well and Laravel provides many features to help writing tests. So let's see how we can test the modifications to the dashboard and the new API route that we implemented previously.
+
+The test files are located in the `tests` directory. Tests are executed with [PHPUnit](https://phpunit.de). Laravel comes with a few example tests so you can already run the command `./vendor/bin/phpunit` to execute the tests:
+
+```
+PHPUnit 9.5.26 by Sebastian Bergmann and contributors.
+
+..                                                                  2 / 2 (100%)
+
+Time: 00:00.090, Memory: 22.00 MB
+
+OK (2 tests, 2 assertions)
+```
+
+Let's add a new test for the dashboard controller in `tests/Http/Controllers/HomeControllerTest.php`:
+
+```php
+<?php
+
+namespace Tests\Http\Controllers;
+
+use App\Models\User;
+use Tests\TestCase;
+
+class HomeControllerTest extends TestCase
+{
+    public function test_redirect_unauthenticated()
+    {
+        $this->get('/home')->assertRedirect('/login');
+    }
+
+    public function test_see_username_on_dashboard()
+    {
+        $user = User::factory()->make();
+        $this->actingAs($user)
+            ->get('/home')
+            ->assertStatus(200)
+            ->assertSee("You are logged in, {$user->name}!");
+    }
+}
+```
+
+This class includes tests to check if an unauthenticated visitor is redirected to the login page and if a logged-in user sees their own user name on the dashboard. You can learn more about the available methods for testing in the [Laravel documentation](https://laravel.com/docs/testing).
+
+Let's execute the new tests `./vendor/bin/phpunit --filter HomeControllerTest`:
+
+```
+PHPUnit 9.5.26 by Sebastian Bergmann and contributors.
+
+No tests executed!
+```
+
+Wait, no tests executed? That's because we didn't write the test either as Feature or as Uni test as Laravel suggested. We have to update the PHPUnit configuration in `phpunit.xml` first:
+
+```diff
+- <testsuite name="Unit">
+-     <directory suffix="Test.php">./tests/Unit</directory>
+- </testsuite>
+- <testsuite name="Feature">
+-     <directory suffix="Test.php">./tests/Feature</directory>
+- </testsuite>
++ <testsuite name="Tests">
++    <directory suffix="Test.php">./tests</directory>
++ </testsuite>
+```
+
+Again `./vendor/bin/phpunit --filter HomeControllerTest`:
+
+```
+PHPUnit 9.5.26 by Sebastian Bergmann and contributors.
+
+..                                                                  2 / 2 (100%)
+
+Time: 00:00.112, Memory: 26.00 MB
+
+OK (2 tests, 4 assertions)
+```
+
+Much better! You can try to change the welcome message on the dashboard to see the test fail.
+
+Now we add another test for the API route in `tests/Http/Controllers/Api/QuoteControllerTest.php`:
+
+```php
+<?php
+
+namespace Tests\Http\Controllers\Api;
+
+use App\Models\User;
+use Tests\TestCase;
+
+class QuoteControllerTest extends TestCase
+{
+   public function test_get_deny_unauthenticated()
+    {
+        $this->getJson('/api/quote')->assertStatus(401);
+    }
+
+    public function test_get()
+    {
+        $user = User::factory()->make();
+        $this->actingAs($user)
+            ->getJson('/api/quote')
+            ->assertStatus(200)
+            ->assertJson(fn ($json) => $json->has('quote'));
+    }
+}
+```
+
+These tests now use the `getJson` method to simulate requests done by JavaScript. We check again that access is denied if the user is not authenticated and that we get a JSON object including a `quote` otherwise. A final `./vendor/bin/phpunit` runs all tests:
+
+```
+PHPUnit 9.5.26 by Sebastian Bergmann and contributors.
+
+......                                                              6 / 6 (100%)
+
+Time: 00:00.131, Memory: 26.00 MB
+
+OK (6 tests, 10 assertions)
+```
+
+Now you should probably sit down and reed a little more about [Laravel](https://laravel.com/docs) and [Vue](https://vuejs.org/guide/introduction.html) in their documentation. You can also experiment a little more with your new appplication and the tests. Next up we will build a real application, so bring some time and snacks!
+
+**Next lesson:** [A Basic Image Annotation Tool](/lesson-6)
