@@ -60,6 +60,134 @@ If you want to compile the assets for production, instead (which will make the f
 
 Here we want to implement the simple features of the server-side application of [lesson 2](/lesson-2) with Laravel. You will notice that the implementation will be much more abstract and verbose but this is a good thing for the sustainability of a large project! But before you start, create a new user account and log in to your application.
 
-In order to implement the features from [lesson 2](/lesson-2) we have to touch the subjects of [routing](https://laravel.com/docs/routing), [controllers](https://laravel.com/docs/controllers) and [templates](https://laravel.com/docs/blade). Routes define the URLs that the application can answer to, controllers implement the logic of what happens when a route is visited and templates help to define the HTML of a response page that might be returned by a controller. With the default scaffolding of Laravel UI, there already exists a `/home` route with a dashboard that you should see when you are logged in. You can find the route definition in `routes/web.php`, the controller in `app/Http/Controllers/HomeController.php` and the template in `resources/views/home.blade.php`.
+In order to implement the features from [lesson 2](/lesson-2), we have to touch the subjects of [routing](https://laravel.com/docs/routing), [controllers](https://laravel.com/docs/controllers) and [templates](https://laravel.com/docs/blade). Routes define the URLs that the application can answer to, controllers implement the logic of what happens when a route is visited and templates help to define the HTML of a response page that might be returned by a controller. With the default scaffolding of Laravel UI, there already exists a `/home` route with a dashboard that you should see when you are logged in. You can find the route definition in `routes/web.php`, the controller in `app/Http/Controllers/HomeController.php` and the template in `resources/views/home.blade.php`.
+
+Let's implement a dynamic welcome message that uses information from the query string of the URL. To fetch information from the query string, we have to update the `index()` method of the dashboard controller in `app/Http/Controllers/HomeController.php`:
+
+```php
+public function index(Request $request)
+{
+    return view('home', [
+        'name' => $request->input('name', 'dude'),
+    ]);
+}
+```
+
+Rather than just returning a view, this will get "input" from the request (which can be anything from the query string or from the request body). Here, we fetch the value of the `name` key again and fall back to `'dude'` if there is no value. This is passed on to the view as a variable called `name`. Now we can update the template to use this variable in `resources/views/home.blade.php`:
+
+```diff
+- {{ __('You are logged in!') }}
++ {{ "You are logged in, {$name}!" }}
+```
+
+For simplicity, we replace the `__()` helper function for [localization](https://laravel.com/docs/localization) with a plain string and include the name variable there. Now you can visit <http://localhost:8000/home?name=Joe> and see the dynamic welcome message in action.
+
+But wait... this is now an enterprise-level application and we have actual user accounts with user names! So let's use the user name instead of the value from the query string in the controller:
+
+```diff
+- 'name' => $request->input('name', 'dude'),
++ 'name' => $request->user()->name,
+```
+
+Nifty! 😎
 
 ## Recreating Lesson 3
+
+Now we have the very basics of a server-side application with Laravel figured out. Here comes the client-side application with Vue.js. Since we already found a good solution for setting the user name, we will use a nice demo package of Laravel that returns random inspiring quotes and load these dynamically via JavaScript and the API.
+
+First, we define a new API route in `routes/api.php`:
+
+```php
+Route::middleware('auth:sanctum')->get('/quote', [App\Http\Controllers\Api\QuoteController::class, 'get']);
+```
+
+The `auth:sanctum` [middleware](https://laravel.com/docs/middleware) makes sure that the user is authenticated (i.e. providing an API token), so this route can only be used by registered users. In order to also allow logged-in users to access the route (without API token), we have to enable a middleware in `app/Http/Kernel.php`:
+
+```diff
+- // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
++ \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+```
+
+The new route is defined to listen to [`GET` requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) at the `/api/quote` URL (the `api` prefix is automatically added for all routes in `api.php`) and to process these requests in the `get()` method of a `QuoteController`. Let's continue to create this controller as `app/Http/Controllers/Api/QuoteController.php`:
+
+```php
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Inspiring;
+
+class QuoteController extends Controller
+{
+    /**
+     * Return an inspiring quote.
+     *
+     * @return string
+     */
+    public function get()
+    {
+        return json_encode(['quote' => Inspiring::quote()]);
+    }
+}
+```
+
+As this is the first time we write an actual PHP class, we'll quickly step through the lines in detail:
+
+- `namespace ...` defines the "full path" to the class name, which is `App\Http\Controllers\Api\QuoteController`. This _must_ be reflected by the actual file path `app/Http/Controllers/Api/QuoteController.php`, as the namespace and class name is used to define which file must be opened to initialize the class when it is used.
+
+- `use ...` statemets define the full paths to other classes that are not within the same namespace of the current class.
+
+- `class QuoteController extends Controller` begins the class definition of a new controller, which extends the default controller class that already includes some helpful methods.
+
+- `public function get()` is a method of the controller that will be called when the `/api/quote` route is visited (as defined above).
+
+With this, the API is finished already! Let's head over to the dashboard template and add some HTML elements:
+
+```diff
+  {{ "You are logged in, {$name}!" }}
++ <button class="btn btn-primary" v-on:click="getQuote">Get a quote</button>
++ <blockquote class="blockquote" v-if="quote" v-html="quote"></blockquote>
+```
+
+This is a button that can be clicked and a blockquote element. Both elements have these strange `v-...` attributes which are understood by Vue.js:
+
+- `v-on:click="getQuote"` registers an event handler that calls the `getQuote()` method whenever the button is clicked.
+
+- `v-if="quote"` shows the HTML element only if the `quote` variable has any content.
+
+- `v-html="quote"` inserts the content of the `quote` variable into the HTML element.
+
+But we haven't defined any `getQuote()` method or `quote` variable, yet, right? Vue knows this, too, and complains about this. You can see this by opening the browser developer tools (<kbd>F12</kbd>) and switching to the Console. There you will see warning messages:
+
+```
+ [Vue warn]: Property "getQuote" was accessed during render but is not defined on instance.
+ [Vue warn]: Property "quote" was accessed during render but is not defined on instance.
+```
+
+All this only works because a Vue instance is already created and mounted as part of the Laravel UI scaffolding. The instance is defined in `resources/js/app.js`. At the bottom of the file you'll see that the instance is mounted to an HTML element with the `app` ID attribute. This element can be found in `resources/views/layouts/app.blade.php`.
+
+Let's silence the Vue warnings and extend the Vue instance in `resources/js/app.js`:
+
+```js
+const app = createApp({
+   data() {
+      return {
+         quote: '',
+      };
+   },
+   methods: {
+      getQuote() {
+         axios.get('/api/quote').then(response => this.quote = response.data.quote);
+      },
+   },
+});
+````
+
+This defines a new `quote` variable (in `data()`) and a new `getQuote()` function (in `methods`). When `getQuote()` is called, the [axios](https://axios-http.com) library is used to make a `GET` HTTP request to the new API endpoint (axios is bundled with Laravel and initialized in `resources/js/bootstrap.js`). When the request is successful, the `quote` is extracted from the response and assigned to the `quote` variable of the Vue instance. Vue then magically takes care of displaying the quote in the HTML. Give it a try!
+
+You can press the button multiple times and get a new quote each time. To observe the HTTP requests that are sent in the background, open the developer tools (<kbd>F12</kbd>) again and switch to the Network tab.
+
+As with Laravel, we can't get into great detail about Vue here. You should read the Introduction and Essentials of the [Vue documentation](https://vuejs.org/guide/introduction.html) before you continue to the next lesson.
+
+## Tests
