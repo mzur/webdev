@@ -39,13 +39,15 @@ As a first step, we will implement the opening of an image file. This is fully c
     {{ config('app.name', 'Laravel') }}
   </a>
 
-+ <form class="form-inline" v-on:submit.prevent="openImage">
-+   <button class="btn btn-outline-success">Open New Image</button>
-+   <input class="invisible" ref="fileInput" type="file" accept="image/jpeg,image/png">
-+ </form>
++ @if (Auth::user())
++   <form class="form-inline" v-on:submit.prevent="openImage">
++     <button class="btn btn-outline-success">Open New Image</button>
++     <input class="invisible" ref="fileInput" type="file" accept="image/jpeg,image/png">
++   </form>
++ @endif
 ```
 
-This is a form containing a button and an invisible file input field. The file input field is restricted to JPEG and PNG images and has the special `ref="fileInput"` attribute which will be important to identify it later on. When the button is pressed, the form is submitted. The form itself has a registered event handler that calls a `openImage()` method on submit. The event handler includes the `prevent` modifier to prevent the form from executing its default submit action (i.e. sending a HTTP request).
+This is a form containing a button and an invisible file input field. The form only appears if the user is authenticated (i.e. logged-in). The file input field is restricted to JPEG and PNG images and has the special `ref="fileInput"` attribute which will be important to identify it later on. When the button is pressed, the form is submitted. The form itself has a registered event handler that calls a `openImage()` method on submit. The event handler includes the `prevent` modifier to prevent the form from executing its default submit action (i.e. sending a HTTP request).
 
 Now let's update the Vue instance in `resources/js/app.js` to handle the submit event:
 
