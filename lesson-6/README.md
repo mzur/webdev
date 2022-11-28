@@ -86,9 +86,210 @@ const app = createApp({
 
 The `openImage()` method now simply executes a click action on the file input element (which is [referenced](https://vuejs.org/api/component-instance.html#refs) using its `ref` ID). When a file is selected, the input will fire a `changed` event. The event listener for this event is registered in the `mounted()` hook of the Vue instance. Whenever `change` is fired, the `loadImage()` method will be called. This method used the [File API](https://developer.mozilla.org/en-US/docs/Web/API/File_API) to read the contents of the image file and create a new Image object. This needs another event listener on the `load` event of the image object because images are loaded asynchronously. Finally, the `handleImageLoaded()` method is called when a new image is fully loaded and assigns the image object to the `image` variable of the Vue instance. Feel free to add a `console.log(this.image)` here and test it in your browser.
 
-Next, we create a new Vue component that handles the display of the image using [OpenLayers](https://openlayers.org). OpenLayers is a library to visualize interactive maps but it is great for displaying (and annotating) images as well.
+Next, we create a new Vue component that handles the display of the image using [OpenLayers](https://openlayers.org). OpenLayers is a library to visualize interactive maps but it is great for displaying (and annotating) images as well. The component should be displayed using the full width and height available on the dashboard, so let's start by removing the CSS padding in `resources/views/layouts/app.blade.php`:
 
-- npm install ol
+```diff
+- <main class="py-4">
++ <main>
+
+```
+
+Then we replace the current content of the dashboard with the new component in `resources/views/home.blade.php`:
+
+```diff
+- <div class="container">
+-     <div class="row justify-content-center">
+-         <div class="col-md-8">
+-             <div class="card">
+-                 <div class="card-header">{{ __('Dashboard') }}</div>
+-
+-                 <div class="card-body">
+-                     @if (session('status'))
+-                         <div class="alert alert-success" role="alert">
+-                             {{ session('status') }}
+-                         </div>
+-                     @endif
+-
+-                     {{ __('You are logged in!') }}
+-                 </div>
+-             </div>
+-         </div>
+-     </div>
+- </div>
++ <image-container :image="image"></image-container>
+```
+
+Before we implement the component, we register it with the Vue instance that runs the dasboard in `resources/js/app.js`:
+
+```diff
+  import { createApp } from 'vue';
++ import ImageContainer from './components/ImageContainer.vue';
+```
+
+```diff
++ components: {
++    ImageContainer: ImageContainer,
++ },
+  methods: {
+```
+
+Also we need to add OpenLayers to the JavaScript dependencies by executing `npm install ol`. Now we can finally implement the ImageContainer in `resources/js/components/ImageContainer.vue` as a [Vue single-file component](https://vuejs.org/guide/scaling-up/sfc.html):
+
+
+```vue
+<template>
+<div class="image-container"></div>
+</template>
+
+<script>
+import "ol/ol.css";
+import ImageLayer from 'ol/layer/Image';
+import ImageStatic from 'ol/source/ImageStatic';
+import Map from 'ol/Map';
+import Projection from 'ol/proj/Projection';
+import View from 'ol/View';
+import {getCenter} from 'ol/extent';
+
+const imageLayer = new ImageLayer();
+const map = new Map({
+    layers: [imageLayer],
+});
+
+export default {
+    props: {
+        image: {
+            type: Image,
+        },
+    },
+    methods: {
+        updateImage(image) {
+            const extent = [0, 0, image.width, image.height];
+            const projection = new Projection({
+                code: 'image',
+                units: 'pixels',
+                extent: extent,
+            });
+
+            imageLayer.setSource(new ImageStatic({
+                url: image.src,
+                projection: projection,
+                imageExtent: extent,
+            }));
+
+            map.setView(new View({
+                projection: projection,
+                center: getCenter(extent),
+                zoom: 1,
+                maxZoom: 8,
+            }));
+        },
+    },
+    watch: {
+        image(image) {
+            this.updateImage(image);
+        },
+    },
+    mounted() {
+        map.setTarget(this.$el);
+    },
+};
+</script>
+
+<style lang="scss" scoped>
+.image-container {
+    height: calc(100vh - 55px);
+}
+</style>
+```
+
+This seems like a lot of code but essentially it is just a wrapper of the OpenLayers [example to display a static image](https://openlayers.org/en/latest/examples/static-image.html) as a Vue component. So let's break this down:
+
+```vue
+<template>
+<div class="image-container"></div>
+</template>
+
+<style lang="scss" scoped>
+.image-container {
+    height: calc(100vh - 55px);
+}
+</style>
+```
+
+The template is as simple as it gets. Just a single `div` element with a single CSS class. The class assigns the full screen height minus the height of the Bootstrap navbar to the element.
+
+```js
+//...
+
+export default {
+    props: {
+        image: {
+            type: Image,
+        },
+    },
+    methods: {
+        // ...
+    },
+    watch: {
+        image(image) {
+            this.updateImage(image);
+        },
+    },
+    // ...
+};
+```
+
+The component has an `image` property which must be an HTML `Image` element. Whenever this property changes, the `updateImage()` method is called.
+
+```js
+const imageLayer = new ImageLayer();
+const map = new Map({
+    layers: [imageLayer],
+});
+
+export default {
+    // ...
+    mounted() {
+        map.setTarget(this.$el);
+    },
+};
+```
+
+A new OpenLayers map is created and contains a single ImageLayer, according to the [static image example](https://openlayers.org/en/latest/examples/static-image.html). When the component is mounted, the HTML element of the component is assigned as the target element of the OpenLayers map. It's important to use the `mounted()` hook of the Vue component (instead e.g. `created()`) because only at this point the HTML element actually exists. This is required by OpenLayers.
+
+```js
+export default {
+    // ...
+    methods: {
+        updateImage(image) {
+            const extent = [0, 0, image.width, image.height];
+            const projection = new Projection({
+                code: 'image',
+                units: 'pixels',
+                extent: extent,
+            });
+
+            imageLayer.setSource(new ImageStatic({
+                url: image.src,
+                projection: projection,
+                imageExtent: extent,
+            }));
+
+            map.setView(new View({
+                projection: projection,
+                center: getCenter(extent),
+                zoom: 1,
+                maxZoom: 8,
+            }));
+        },
+    },
+    // ...
+};
+```
+
+The `updateImage()` method implements the display of the image according to the [static image example](https://openlayers.org/en/latest/examples/static-image.html). Instead of just using a URL of the image as in the example, here we have an actual HTML image object and use the `src` attribute of the object as URL. This is the "dataURL" from above which is the image file as a [base64](https://en.wikipedia.org/wiki/Base64) encoded string and works just as well as an actual URL.
+
+Now you have a  fully functional client-side image viewer already. Go ahead and open an image and explore the default available OpenLayers interactions such as zooming and panning.
 
 ## Image Database Model
 
