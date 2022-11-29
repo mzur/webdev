@@ -42,7 +42,7 @@ As a first step, we will implement the opening of an image file. This is fully c
 + @if (Auth::user())
 +   <form class="form-inline" v-on:submit.prevent="openImage">
 +     <button class="btn btn-outline-success">Open New Image</button>
-+     <input class="invisible" ref="fileInput" type="file" accept="image/jpeg,image/png">
++     <input class="d-none" ref="fileInput" type="file" accept="image/jpeg,image/png">
 +   </form>
 + @endif
 ```
@@ -292,6 +292,101 @@ The `updateImage()` method implements the display of the image according to the 
 Now you have a  fully functional client-side image viewer already. Go ahead and open an image and explore the default available OpenLayers interactions such as zooming and panning.
 
 ## Image Database Model
+
+When we want to store image annotations in the database later, we also need a database table for the images to which the annotations belong. We will keep it simple here and don't implement anything like a file upload and serving of the image files from the backend. Instead, the images are only opened locally, as was already implemented in the previous section. Each newly opened image file is identified by it's [SHA256](https://en.wikipedia.org/wiki/SHA-2) file hash. This way, we can fetch the annotations for a given image whenever the file is opened.
+
+Database interactions in Laravel are done mostly through the [Eloquent](https://laravel.com/docs/9.x/eloquent) object-relational mapper (ORM). This mechanism maps database tables to PHP classes (called "models") and entries in the tables to PHP objects. We will now create a new Image model by executing `php artisan make:model -cfmr Image`, which is a convenient helper command provided by Laravel. This command will create several files which we will now step through in order to implement the new Image model.
+
+### The Migration
+
+File: `database/migrations/xxx_xx_xx_xxxxxx_create_images_table.php`
+
+The [migration](https://laravel.com/docs/9.x/migrations) defines the changes to the database that are required for the new model (i.e. creating a new table). This file will have a unique timestamp as prefix because it is essential that multiple migration files are executed in the correct order. Each migration has an `up()` method that applies the changes to the database and a `down()` method which reverts all the changes. These are already filled by the helper command to create and drop a new database table, respectively. We only need to extend the `up()` method:
+
+```php
+Schema::create('images', function (Blueprint $table) {
+    $table->id();
+    $table->timestamps();
+    $table->string('hash', 64); // SHA256 hash
+    $table->foreignId('user_id')
+        ->constrained()
+        ->cascadeOnDelete();
+
+    $table->unique(['hash', 'user_id']);
+});
+```
+
+Here we define that the new database table should have the columns `id`, `created_at`, `updated_at` (from `timestamps()`), `hash` and `user_id`. The `user_id` should contain a foreign key from the `users` table with the additional constraint that an a row in `images` should be deleted whenever the respective row in `users` is deleted. Constraints like these are a great way to maintain consistency in the database (e.g. you could also say that a user is not allowed to be deleted as long as they have images). Finally we define a unique composite index with the `hash` and `user_id` columns. This will speed up queries like "find the image with hash x of user y" that we need later. Also it ensures that each user can create only a single database entry for a given image (hash).
+
+### The Model
+
+File: `app/Models/Image.php`
+
+This file defines special properties of the Image model that are used by the Eloquent ORM. Since Eloquent can already do many things by default and the model file was also already filled by the helper command, we only need to add these few lines to the class definition:
+
+```php
+/**
+ * The attributes that are mass assignable.
+ *
+ * @var array
+ */
+protected $fillable = ['hash'];
+```
+
+This is required in order to use the convenient `create()` method of an Eloquent model later on ([here are the details](https://laravel.com/docs/9.x/eloquent#mass-assignment)).
+
+We also update the existing User model with a new [relationship](https://laravel.com/docs/9.x/eloquent-relationships) in `app/Models/User.php`:
+
+```php
+/**
+ * The images that belong to this user.
+ *
+ * @return \Illuminate\Database\Eloquent\Relations\HasMany
+ */
+public function images()
+{
+    return $this->hasMany(Image::class);
+}
+```
+
+This relationship can be used to conveniently fetch all images of a user.
+
+### The Factory
+
+File: `database/factories/ImageFactory.php`
+
+A [model factory](https://laravel.com/docs/9.x/eloquent-factories) defines a method to create new instances of the Image model that contain fake data (for testing). This file is also conveniently filled by the helper command and we only have to add content to the `definition()` method:
+
+```php
+return [
+    'user_id' => User::factory(),
+    'hash' => fake()->sha256(),
+];
+```
+
+When a new model instance should be created using the factory, a new user will be created, too (using its factory), and a fake hash is generated. The remaining columns (`id`, `created_at` and `updated_at`) are automatically set by Eloquent.
+
+### The Tests
+
+You could also create a test file with the helper command from above but we do this manually here. In our case, we don't need a test file for the Image model itself (yet) but we create a User model test and implement tests for the API controller.
+
+You might wonder why we write the tests for the controller before we implement the controller (below). This is a practice that can be very helpful during development (and is inspired by [Test-driven development](https://en.wikipedia.org/wiki/Test-driven_development)). You first write a test for something you want to implement next. This test will fail, of course. Next, you actually implement this something until the test succeeds. Then you update the test to also include more of what you want to implement. Then you continue the actual implementations until the test succeeds again etc... You don't have to implement the tests completely before you start with the actual implementation but you can do it back-and-forth as described above. Here, we define the complete tests, first, because it is easier to read.
+
+- Create UserTest.php
+
+- Create Http\Controllers\ImageControllerTest.php
+
+### The Controller
+
+File: `app/Http/Controllers/ImageController.php`
+
+The (API) controller that handles actions involving the model (e.g. creating new images).
+    -> Delete index/show/update/destroy Controller methods
+
+- define the route
+- php artisan migrate
+- Update the JavaScript
+    -> npm install crypto-js
 
 ## Annotation Display
 
