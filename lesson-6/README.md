@@ -2,7 +2,7 @@
 
 In this final lesson we will implement a basic image annotation tool. It will work like this: Users can open a local image and explore the image interactively. They can place point annotations on the image which are automatically saved in the database. Whenever the user opens the same image again, the annotations are loaded and displayed.
 
-TODO: MP4 demo screencast
+**TODO: MP4 demo screencast**
 
 ## Project Setup
 
@@ -318,6 +318,8 @@ Schema::create('images', function (Blueprint $table) {
 
 Here we define that the new database table should have the columns `id`, `created_at`, `updated_at` (from `timestamps()`), `hash` and `user_id`. The `user_id` should contain a foreign key from the `users` table with the additional constraint that an a row in `images` should be deleted whenever the respective row in `users` is deleted. Constraints like these are a great way to maintain consistency in the database (e.g. you could also say that a user is not allowed to be deleted as long as they have images). Finally we define a unique composite index with the `hash` and `user_id` columns. This will speed up queries like "find the image with hash x of user y" that we need later. Also it ensures that each user can create only a single database entry for a given image (hash).
 
+Execute `php artisan migrate` to apply the new migration to your database.
+
 ### The Model
 
 File: `app/Models/Image.php`
@@ -368,25 +370,231 @@ When a new model instance should be created using the factory, a new user will b
 
 ### The Tests
 
-You could also create a test file with the helper command from above but we do this manually here. In our case, we don't need a test file for the Image model itself (yet) but we create a User model test and implement tests for the API controller.
+You could also create a test file with the helper command from above but we do this manually here. We create an Image model test and implement tests for the API controller.
 
 You might wonder why we write the tests for the controller before we implement the controller (below). This is a practice that can be very helpful during development (and is inspired by [Test-driven development](https://en.wikipedia.org/wiki/Test-driven_development)). You first write a test for something you want to implement next. This test will fail, of course. Next, you actually implement this something until the test succeeds. Then you update the test to also include more of what you want to implement. Then you continue the actual implementations until the test succeeds again etc... You don't have to implement the tests completely before you start with the actual implementation but you can do it back-and-forth as described above. Here, we define the complete tests, first, because it is easier to read.
 
-- Create UserTest.php
+First we create the test for the new Image model in `tests/Models/ImageTest.php`:
 
-- Create Http\Controllers\ImageControllerTest.php
+```php
+<?php
+
+namespace Tests\Models;
+
+use App\Models\Image;
+use Illuminate\Database\QueryException;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class ImageTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function test_user_image_hash_unique()
+    {
+        $image1 = Image::factory()->create();
+        $this->expectException(QueryException::class);
+        $image2 = $image1->replicate();
+        $image2->save();
+    }
+}
+
+```
+
+This class contains a single test case that checks the unique constraint of an Image `user_id` and `hash`. When we try to save an additional image with the same hash beloning to the same user, the database should throw an exception.
+
+Now let's continue with the controller tests in `tests/Http/Controllers/ImageControllerTest.php`:
+
+```php
+<?php
+
+namespace Tests\Http\Controllers;
+
+use App\Models\User;
+use App\Models\Image;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class ImageControllerTest extends TestCase
+{
+    use RefreshDatabase;
+}
+```
+
+This class is empty for now but we'll add test methods one by one. First we test that the route can only be accessed if the user is authenticated (i.e. logged-in):
+
+```php
+public function test_store_authenticated()
+{
+    $this->postJson('/api/images')->assertStatus(401);
+}
+```
+
+Next, we test the behavior when a an image is opened that doesn't exist in the database yet:
+
+```php
+public function test_store_new()
+{
+    $user = User::factory()->create();
+    $this->be($user);
+    // Validation error because no hash is provided.
+    $this->postJson('/api/images')->assertStatus(422);
+
+    $hash = fake()->sha256();
+    $this->postJson('/api/images', ['hash' => $hash])
+        ->assertStatus(201)
+        ->assertJson(fn ($json) => $json->has('id'));
+
+    $image = $user->images()->first();
+    $this->assertNotNull($image);
+    $this->assertEquals($hash, $image->hash);
+}
+```
+
+The [response status code](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status) `201` tells us that a new image was created. No we test the case when an image is opened that already exists in the database:
+
+```php
+public function test_store_existing()
+{
+    $user = User::factory()->create();
+    $image = Image::factory()->create(['user_id' => $user->id]);
+    $this->be($user);
+    $this->postJson('/api/images', ['hash' => $image->hash])
+        ->assertStatus(200)
+        ->assertJson(fn ($json) => $json->where('id', $image->id));
+
+    $this->assertEquals(1, $user->images()->count());
+}
+```
+
+Here we check if no new image is stored in the database (the count should still be 1) and the response status code should just be `200` this time. Finally, we can test what happens if a user opens an image that already exists for another user:
+
+```php
+public function test_store_duplicate_other_user()
+{
+    $user = User::factory()->create();
+    $image = Image::factory()->create();
+    $this->be($user);
+    $this->postJson('/api/images', ['hash' => $image->hash])
+        ->assertStatus(201)
+        ->assertJson(fn ($json) => $json->whereNot('id', $image->id));
+
+    $newImage = $user->images()->first();
+    $this->assertNotNull($newImage);
+    $this->assertEquals($image->hash, $newImage->hash);
+    $this->assertNotEquals($image->id, $newImage->id);
+}
+```
+
+The image should be newly created for the user and should not be the same image as for the other user. Note that if we use `Image::factory()` it will create a new user automatically, which is the "other user" in this test.
+
+You can run the tests by executing `./vendor/bin/phpunit`.
 
 ### The Controller
 
 File: `app/Http/Controllers/ImageController.php`
 
-The (API) controller that handles actions involving the model (e.g. creating new images).
-    -> Delete index/show/update/destroy Controller methods
+After writing the tests it's time to implement the actual (API) controller that handles actions involving the Image model. The helper command already filled this file but we only need to keep the `store()` method here. Let's implement the method to satisfy the tests above:
 
-- define the route
-- php artisan migrate
-- Update the JavaScript
-    -> npm install crypto-js
+```php
+public function store(Request $request)
+{
+    $request->validate([
+        'hash' => 'required|regex:/^[A-Fa-f0-9]{64}$/',
+    ]);
+
+    $image = $request->user()->images()->firstOrCreate([
+        'hash' => $request->input('hash'),
+    ]);
+
+    $image->makeHidden('hash', 'created_at', 'updated_at', 'user_id');
+
+    return $image;
+}
+```
+
+First, we [validate](https://laravel.com/docs/9.x/validation#main-content) the request to make sure that a `hash` is provided and the hash has the correct format. If the validation fails, an error message will be returned. Next, `firstOrCreate()` is used to create a new image as part of the images that belong to the current user *or* the image will be fetched from the database if it already exists with the same hash. Then we "hide" all the attributes of the image that are irrelevant for the response. In this case we are only interested in the image ID. Finally, the Image instance is returned. This object will be automatically converted to a JSON response by Laravel.
+
+Before the controller actually works, a new route must be configured for it in `routes/api.php`:
+
+```php
+use App\Http\Controllers\ImageController;
+
+//...
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('images', [ImageController::class, 'store']);
+});
+```
+
+This route uses the `auth:sanctum` middleware again to make sure that the user is authenticated. As in the previous lesson, we have to enable the appropriate middleware to also allow authentication via log-in through the browser in `app/Http/Kernel.php`:
+
+```diff
+- // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
++ \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+```
+
+Now execute `./vendor/bin/phpunit` again to see your tests succeed!
+
+This finishes the implementation of the new Image model in the backend. Next, we have to use it in the frontend, too.
+
+### The Frontend
+
+When a new image is opened we now want to perform a request to the backend to get the (new) image ID. When the request was successful, the image should be displayed. As we need the image hash to make the request, we first have to install the [crypto-js](https://www.npmjs.com/package/crypto-js) package, which provides a SHA256 hash function, by executing `npm install crypto-js`. Now we can update `resources/js/app.js`:
+
+```diff
+  import ImageContainer from './components/ImageContainer.vue';
++ import sha256 from 'crypto-js/sha256';
+```
+```diff
+  data() {
+      return {
+          image: null,
++         imageId: null,
+```
+```diff
+  handleImageLoaded(event) {
+-     this.image = event.target;
++     let hash = sha256(event.target.src).toString();
++     axios.post('api/images', {hash})
++         .then(response => this.imageId = response.data.id)
++         .then(() => this.image = event.target);
+```
+In `handleImageLoaded()`, the hash is computed and the axios library (remember from the previous lesson) is used to perform a `POST` request to the backend. When the request was successful, the returned image ID is saved to `this.imageId` and the image file is set to `this.image`, which will trigger the display of the image by the ImageContainer component.
+
+Whenever a user waits on a HTTP request like this, it is nice to display a loading indicator. The Bootstrap CSS framework makes it quite easy to add one to `resources/views/layouts/app.blade.php`:
+
+```diff
+- <form class="form-inline" v-on:submit.prevent="openImage">
++ <form class="form-inline me-3" v-on:submit.prevent="openImage">
+      <button class="btn btn-outline-success">Open New Image</button>
+      <input class="d-none" ref="fileInput" type="file" accept="image/jpeg,image/png">
+  </form>
++ <div class="spinner-border" v-if="loading"></div>
+```
+
+The spinner is only shown if the `loading` variable is `true`. Let's implement this in `resources/ja/app.js`:
+
+```diff
+  data() {
+      return {
+          image: null,
+          imageId: null,
++         loading: false,
+```
+```diff
+  loadImage(event) {
++     this.loading = true;
+```
+```diff
+  axios.post('api/images', {hash})
+      .then(response => this.imageId = response.data.id)
+-     .then(() => this.image = event.target);
++     .then(() => this.image = event.target)
++     .finally(() => this.loading = false);
+```
+
+Done! Now you can open an image and it will create a new entry in the database or retrieve an existing one.
 
 ## Annotation Display
 

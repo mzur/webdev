@@ -14,7 +14,14 @@ The setup of a new Laravel project requires the Composer PHP package manager tha
 composer create-project laravel/laravel example-app
 ```
 
-Now a new Laravel project is installed in the `example-app` directory. You can go ahead and enter the directory, then run `php artisan serve` which will start the PHP development server for the project. Visit <http://localhost:8000> and Laravel should show you the default start page.
+Now a new Laravel project is installed in the `example-app` directory. Go ahead and enter the directory. Before we can start, one line must be updated in the `.env` file:
+
+```diff
+- APP_URL=http://localhost
++ APP_URL=http://localhost:8000
+```
+
+Now you can run `php artisan serve` which will start the PHP development server for the project. Visit <http://localhost:8000> and Laravel should show you the default start page.
 
 ## User Interface Scaffolding
 
@@ -32,7 +39,17 @@ Now we can instruct the package to set up the user interface scaffolding (i.e. l
 php artisan ui vue --auth
 ```
 
-Finally, before we can actually create user accounts, we have to configure the database. The simplest way is to use SQLite. With SQLite, the whole database is simply created as a single file in your project directory. This system is powerful enough to be used even in small- to medium-scale production scenarios. To use SQLite, modify the `DB_CONNECTION` variable in the `.env` file to `sqlite`. Also, remove the `DB_DATABASE` variable from the file, so laravel will use the default location for the database file (`database/database.sqlite`). Now you can run the database migrations which will create the database file and fill it with the tables for user accounts etc.:
+Finally, before we can actually create user accounts, we have to configure the database. The simplest way is to use SQLite. With SQLite, the whole database is simply created as a single file in your project directory. This system is powerful enough to be used even in small- to medium-scale production scenarios. To use SQLite, modify the `.env` file:
+
+```diff
+- DB_CONNECTION=mysql
++ DB_CONNECTION=sqlite
+  DB_HOST=127.0.0.1
+  DB_PORT=3306
+- DB_DATABASE=laravel
+```
+
+The default location of the database file will be `database/database.sqlite`. Now you can run the database migrations which will create the database file and fill it with the tables for user accounts etc.:
 
 ```bash
 php artisan migrate
