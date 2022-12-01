@@ -299,7 +299,7 @@ Database interactions in Laravel are done mostly through the [Eloquent](https://
 
 ### The Migration
 
-File: `database/migrations/xxx_xx_xx_xxxxxx_create_images_table.php`
+File: `database/migrations/xxxx_xx_xx_xxxxxx_create_images_table.php`
 
 The [migration](https://laravel.com/docs/9.x/migrations) defines the changes to the database that are required for the new model (i.e. creating a new table). This file will have a unique timestamp as prefix because it is essential that multiple migration files are executed in the correct order. Each migration has an `up()` method that applies the changes to the database and a `down()` method which reverts all the changes. These are already filled by the helper command to create and drop a new database table, respectively. We only need to extend the `up()` method:
 
@@ -596,14 +596,214 @@ The spinner is only shown if the `loading` variable is `true`. Let's implement t
 
 Done! Now you can open an image and it will create a new entry in the database or retrieve an existing one.
 
+## Annotation Database Model
+
+Here we will get to the core feature of our little annotation tool: the annotations.
+
 ## Annotation Display
 
-## Annotation Database Model
+In the client-side application, the annotations can be implemented completely by using OpenLayers features. In fact, there is an [OpenLayers example](https://openlayers.org/en/latest/examples/draw-features.html) that shows exactly how to implement annotations with the OpenLayers draw interaction. So let's add the draw interaction to `resources/js/components/ImageContainer.vue`:
+
+```diff
+  import "ol/ol.css";
++ import Draw from 'ol/interaction/Draw';
+  import ImageLayer from 'ol/layer/Image';
+  import ImageStatic from 'ol/source/ImageStatic';
+  import Map from 'ol/Map';
+  import Projection from 'ol/proj/Projection';
++ import VectorLayer from 'ol/layer/Vector';
++ import VectorSource from 'ol/source/Vector';
+```
+```diff
+  const imageLayer = new ImageLayer();
++ const vectorSource = new VectorSource({wrapX: false});
++ const vectorLayer = new VectorLayer({source: vectorSource});
++ const draw = new Draw({
++     source: vectorSource,
++     type: 'Point',
++ });
++
+  const map = new Map({
+-     layers: [imageLayer],
++     layers: [imageLayer, vectorLayer],
+  });
+```
+```diff
+  watch: {
+      image(image) {
+          this.updateImage(image);
+      },
+  },
++ created() {
++     map.addInteraction(draw);
++ },
+```
+
+This doesn't look very complicated, right? We create a new vector layer (for the points) and a draw interaction that both use the same source. Then we add the layer and interaction to the OpenLayers map. Now you can already go ahead and draw points on an image!
+
+But an annotation needs a label, too, which the user should type into an input field each time a new annotation is created. This can be implemented with an OpenLayers overlay, and there is [an example](https://openlayers.org/en/latest/examples/overlay.html) for this, too. The example uses a Bootstrap popover but we'll keep it simpler here and extend the template of `resources/js/components/ImageContainer.vue`:
+
+```diff
+- <div class="image-container"></div>
++ <div class="image-container">
++     <div v-show="showPopup" class="popup" ref="popup">
++         <form @submit.prevent="finishPendingAnnotation">
++             <input
++                 class="form-control"
++                 type="text"
++                 placeholder="Label name"
++                 v-model="pendingLabel"
++                 ref="labelInput"
++                 @keydown.esc="discardPendingAnnotation"
++                 >
++         </form>
++     </div>
++ </div>
+```
+
+This adds a new element that contains a basic HTML form with a single input element for the label. The element is only shown if `showPopup` is `true`. Also we add a `ref` attribute so we can identify the element later on. The form and input elements have event handlers to either finish a pending annotation (on <kbd>Enter</kbd>) or discard it (on <kbd>Esc</kbd>). Also we bind a variable to the input value with `v-model`. The indentation of the input element may look strange but it makes managing lots of attributes much easier.
+
+Now we add the overlay code:
+
+```diff
+  import Map from 'ol/Map';
++ import Overlay from 'ol/Overlay';
+  import Projection from 'ol/proj/Projection';
+```
+```diff
+  const draw = new Draw({
+      source: vectorSource,
+      type: 'Point',
+  });
++
++ const popup = new Overlay({});
+```
+
+Also, we add some more variables to the instance. `pendingAnnotation` will contain information about the annotation while the label is typed. `pendingLabel` will be synchronized with the text typed in the HTML input element. And `showPopup` is dynamically computed to be `true` whenever there is a pending annotation.
+
+```diff
+  props: {
+      image: {
+          type: Image,
+      },
+  },
++ data() {
++     return {
++         pendingAnnotation: null,
++         pendingLabel: '',
++     };
++ },
++ computed: {
++     showPopup() {
++         return this.pendingAnnotation !== null;
++     },
++ },
+```
+
+Next we add the OpenLayers overlay to the map and connect it to the HTML element from the template. Note that this has to wait until the `mounted()` hook is called. Otherwise, the HTML element would not exist yet. Also, we register an event handler to the `addfeature` event of the vector source. This event is fired whenever a new point annotation is drawn.
+
+```diff
+  created() {
+      map.addInteraction(draw);
++     map.addOverlay(popup);
++     vectorSource.on('addfeature', this.handleFeatureAdded);
+  },
+  mounted() {
+     map.setTarget(this.$el);
++    popup.setElement(this.$refs.popup);
+  },
+```
+
+Finally we add some styling to the popup so it is positioned corectly to the right of the point annotation.
+
+```diff
+  <style lang="scss" scoped>
+  .image-container {
+      height: calc(100vh - 55px);
+  }
+
++ .popup {
++     position: absolute;
++     transform: translateY(-50%) translateX(12px);
++     width: 200px;
++ }
+  </style>
+```
+
+As you might have noticed, we have referenced the three methods `handleFeatureAdded()`, `discardPendingAnnotation()` and `finishPendingAnnotation()` but these were not defined yet. Here goes:
+
+```js
+handleFeatureAdded(event) {
+    if (this.pendingAnnotation) {
+        this.discardPendingAnnotation();
+    }
+
+    popup.setPosition(event.feature.getGeometry().getCoordinates());
+    this.pendingAnnotation = event.feature;
+    this.$nextTick(() => this.$refs.labelInput.focus());
+}
+```
+
+If a new annotation should be created but an old one is still pending, the old one is discarded (see below). Then the position of the popup overlay is updated to the position of the point annotation and the OpenLayers feature object is set as `pendingAnnotation`. Finally, the HTML input field of the popup is focussed so the user can start typing right away without having to click in the input field. This must be wrapped in a call of the Vue `$nextTick()` method because we have to wait one "Vue rendering cycle" for the popup to be displayed (`this.showPopup === true`) before calling `focus()` on the element works.
+
+```js
+discardPendingAnnotation() {
+    vectorSource.removeFeature(this.pendingAnnotation);
+    this.pendingAnnotation = null;
+    this.pendingLabel = null;
+}
+```
+
+This just removes the OpenLayers feature from the vector source (removing the point on the map) and resets the variables for the pending annotation and label.
+
+```js
+finishPendingAnnotation() {
+    let [x, y] = this.pendingAnnotation
+        .getGeometry()
+        .getCoordinates()
+        .map(x => Math.round(x * 100) / 100);
+    let label = this.pendingLabel;
+    this.$emit('annotation', {x, y, label});
+    this.pendingAnnotation = null;
+    this.pendingLabel = null;
+}
+````
+
+This method is called when the HTML form of the popup is "submitted" and the label was entered. First, the coordinates of the annotation point are extracted from the OpenLayers feature object. We round the coordinates to two decimals because points can be set with sub-pixel accuracy on the OpenLayers map but more than two decimals would be overkill. Then we `$emit()` an event with all the information on the new annotation and reset the pending annotation and label variables.
+
+The emitted event must be handled by the "parent" of the component which in our case is the Vue instance in `resources/js/app.js`. But first we have to register an event handler in `resources/views/home.blade.php`:
+
+```diff
+- <image-container :image="image"></image-container>
++ <image-container
++     :image="image"
++     v-on:annotation="handleNewAnnotation"
++     ></image-container>
+```
+
+Note the use of `v-on:annotation` instead of `@annotation` because the Blade template syntax also uses `@` which could lead to confusing errors. So you should use the `@` shorthand in component templates and `v-on:` in Blade templates. Now we can implement the event handler in `resources/js/app.js`:
+
+```js
+handleNewAnnotation(annotation) {
+    if (!this.imageId) {
+        return;
+    }
+
+    this.loading = true;
+    axios.post(`api/images/${this.imageId}/annotations`, annotation)
+        .finally(() => this.loading = false);
+}
+```
+
+This sends the annotation information to the annotations API we have implemented previously and event displays the loading spinner while doing so!
+
+- initialize annotations from DB in frontend
 
 ## Wrapping It Up
 
-- set up app according to lesson 5 "project setup" and "user interface scaffolding"
+- recap everything that was done
 
-- configure tests with database
-
-- tool: select local image. explore image with OpenLayers. create image model for user in DB. local image path is unique ID (can we get the full path?). user can add point annotations to image (with free-hand labels). user can load new local image, if it has annotations, annotations are displayed. test everything while adding features!
+- next steps
+    - Implement deleting of annotations
+    - Implement other annotation shapes
+    - contribute to BIIGLE
