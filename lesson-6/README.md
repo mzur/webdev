@@ -32,7 +32,7 @@ Note that we don't only update the test suites this time but also configure new 
 
 ## Image Display
 
-As a first step, we will implement the opening of an image file. This is fully clinet-side for now. A new image should be opened with a click on a button in the navbar, so head over to `resources/viws/layout/app.blade.php` and add this:
+As a first step, we will implement the opening of an image file. This is fully clinet-side for now. A new image should be opened with a click on a button in the navbar, so head over to `resources/views/layout/app.blade.php` and add this:
 
 ```diff
   <a class="navbar-brand" href="{{ url('/') }}">
@@ -119,7 +119,7 @@ Then we replace the current content of the dashboard with the new component in `
 + <image-container :image="image"></image-container>
 ```
 
-Before we implement the component, we register it with the Vue instance that runs the dasboard in `resources/js/app.js`:
+Before we implement the component, we register it with the Vue instance that runs the dashboard in `resources/js/app.js`:
 
 ```diff
   import { createApp } from 'vue';
@@ -361,7 +361,7 @@ A [model factory](https://laravel.com/docs/9.x/eloquent-factories) defines a met
 
 ```php
 return [
-    'user_id' => User::factory(),
+    'user_id' => \App\Models\User::factory(),
     'hash' => fake()->sha256(),
 ];
 ```
@@ -370,7 +370,7 @@ When a new model instance should be created using the factory, a new user will b
 
 ### The Tests
 
-You could also create a test file with the helper command from above but we do this manually here. We create an Image model test and implement tests for the API controller.
+You could also create a test file with the helper command from above but we do this manually here because we don't put the tests in the `Feature` directory. We create an Image model test and implement tests for the API controller.
 
 You might wonder why we write the tests for the controller before we implement the controller (below). This is a practice that can be very helpful during development (and is inspired by [Test-driven development](https://en.wikipedia.org/wiki/Test-driven_development)). You first write a test for something you want to implement next. This test will fail, of course. Next, you actually implement this something until the test succeeds. Then you update the test to also include more of what you want to implement. Then you continue the actual implementations until the test succeeds again etc... You don't have to implement the tests completely before you start with the actual implementation but you can do it back-and-forth as described above. Here, we define the complete tests, first, because it is easier to read.
 
@@ -401,7 +401,7 @@ class ImageTest extends TestCase
 
 ```
 
-This class contains a single test case that checks the unique constraint of an Image `user_id` and `hash`. When we try to save an additional image with the same hash beloning to the same user, the database should throw an exception.
+This class contains a single test case that checks the unique constraint of an Image `user_id` and `hash`. When we try to save an additional image with the same hash belonging to the same user, the database should throw an exception.
 
 Now let's continue with the controller tests in `tests/Http/Controllers/ImageControllerTest.php`:
 
@@ -598,7 +598,316 @@ Done! Now you can open an image and it will create a new entry in the database o
 
 ## Annotation Database Model
 
-Here we will get to the core feature of our little annotation tool: the annotations.
+Here we will get to the core feature of our little annotation tool: the annotations. Each annotation belongs to an image, has `x` and `y` coordinates (as it is a point annotation) as well as a descriptive `label` string. We implement the Annotation model in a similar way than the Image model. If you are feeling adventurous, you can try to implement it on your own before reading on 😉 But know that there is something new this time (The Policy).
+
+We use the helper command again to create the files required for the new model: `php artisan make_model -cfmr Annotation`.
+
+### The Migration
+
+File: `database/migrations/xxxx_xx_xx_xxxxxx_create_annotations_table.php`
+
+In the migration, we add the `x`, `y` and `label` columns as well as the `image_id` foreign key with a constraint to delete all annotations of an image if the image is deleted:
+
+```php
+Schema::create('annotations', function (Blueprint $table) {
+    $table->id();
+    $table->timestamps();
+    $table->decimal('x', 10, 2);
+    $table->decimal('y', 10, 2);
+    $table->string('label', 128);
+    $table->foreignId('image_id')
+        ->constrained()
+        ->cascadeOnDelete();
+});
+```
+
+### The Model
+
+File: `app/Models/Annotation.php`
+
+Here we just have to add the fillable attributes again:
+
+```php
+/**
+ * The attributes that are mass assignable.
+ *
+ * @var array
+ */
+protected $fillable = ['x', 'y', 'label'];
+```
+
+We can also extend the Image model with a new relationship in `app/Models/Image.php`:
+
+```php
+/**
+ * The annotations that belong to this image.
+ *
+ * @return \Illuminate\Database\Eloquent\Relations\HasMany
+ */
+public function annotations()
+{
+    return $this->hasMany(Annotation::class);
+}
+```
+
+### The Factory
+
+File: `database/factories/AnnotationFactory.php`
+
+Complete the `definition()` method:
+
+```php
+return [
+    'x' => fake()->randomFloat(2, 0),
+    'y' => fake()->randomFloat(2, 0),
+    'label' => fake()->word(),
+    'image_id' => \App\Models\Image::factory(),
+];
+```
+
+### The Tests
+
+Here we can first extend the Image model test with a check if all annotations are deleted if the image is deleted. This also checks the existence of the new relation we implemented above. Modify `tests/Models/ImageTest.php`:
+
+```diff
++use App\Models\Annotation;
+ use App\Models\Image;
+```
+```php
+public function test_annotation_delete_cascade()
+{
+    $image = Image::factory()->create();
+    $annotation = Annotation::factory()->create([
+        'image_id' => $image->id,
+    ]);
+
+    $image->delete();
+    $this->assertNull($annotation->fresh());
+}
+```
+
+Now we create a controller test (again, before creating the actual controller) and fill it with a few test methods. Create `tests/Http/Controllers/AnnotationController.php`:
+
+```php
+<?php
+
+namespace Tests\Http\Controllers;
+
+use App\Models\User;
+use App\Models\Image;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class AnnotationControllerTest extends TestCase
+{
+    use RefreshDatabase;
+}
+```
+
+In the first test, we check for authentication again:
+
+```php
+public function test_store_authenticated()
+{
+    $image = Image::factory()->create();
+    $this->postJson("/api/images/{$image->id}/annotations")->assertStatus(401);
+}
+```
+
+Then we also need to check for *authorization*. Where each authenticated user is authorized to create a new image for themselves, they are not authorized to add annotations to any image!
+
+```php
+public function test_store_authorized()
+{
+    $image = Image::factory()->create();
+    $this->be(User::factory()->make());
+    $this->postJson("/api/images/{$image->id}/annotations")->assertStatus(403);
+}
+```
+
+As the request parameters are a little more complex this time, we test the validation in an extra test:
+
+```php
+public function test_store_validation()
+{
+    $user = User::factory()->create();
+    $image = Image::factory()->create(['user_id' => $user->id]);
+    $this->be($user);
+
+    $this->postJson("/api/images/{$image->id}/annotations")
+        ->assertStatus(422)
+        ->assertJsonValidationErrors(['x', 'y', 'label']);
+
+    $this->postJson("/api/images/{$image->id}/annotations", [
+            'x' => -1,
+            'y' => -1,
+            'label' => '',
+        ])
+        ->assertStatus(422)
+        ->assertJsonValidationErrors(['x', 'y', 'label']);
+}
+```
+
+Finally we can check the "happy path" when a new annotation is created:
+
+```php
+public function test_store_new()
+{
+    $user = User::factory()->create();
+    $image = Image::factory()->create(['user_id' => $user->id]);
+    $this->be($user);
+
+    $this->postJson("/api/images/{$image->id}/annotations", [
+            'x' => 1,
+            'y' => 2,
+            'label' => 'object',
+        ])
+        ->assertStatus(201);
+
+    $annotation = $image->annotations()->first();
+    $this->assertNotNull($annotation);
+    $this->assertEquals(1, $annotation->x);
+    $this->assertEquals(2, $annotation->y);
+    $this->assertEquals('object', $annotation->label);
+}
+```
+
+But wait... we also want to display existing annotations whenever a new image is opened. The annotations could be returned directly with the image ID when a new image is created or an existing one is fetched. So let's update `tests/Http/Controllers/ImageControllerTest.php`:
+
+```diff
+  use App\Models\Image;
++ use App\Models\Annotation;
+
+@@ -39,7 +43,10 @@ public function test_store_existing()
+         $this->be($user);
+         $this->postJson('/api/images', ['hash' => $image->hash])
+             ->assertStatus(200)
+-            ->assertJson(fn ($json) => $json->where('id', $image->id));
++            ->assertJson(fn ($json) =>
++                $json->where('id', $image->id)
++                    ->where('annotations', [])
++            );
+```
+
+And we also add a new test method for this case:
+
+```php
+public function test_store_existing_annotations()
+{
+    $user = User::factory()->create();
+    $image = Image::factory()->create(['user_id' => $user->id]);
+    $annotation = Annotation::factory()->create(['image_id' => $image->id]);
+    $expectAnnotation = [
+        'x' => $annotation->x,
+        'y' => $annotation->y,
+        'label' => $annotation->label,
+    ];
+
+    $this->be($user);
+    $this->postJson('/api/images', ['hash' => $image->hash])
+        ->assertStatus(200)
+        ->assertJson(fn ($json) =>
+            $json->where('id', $image->id)
+                ->where('annotations', [$expectAnnotation])
+        );
+}
+```
+
+### The Controller
+
+File: `app/Http/Controllers/AnnotationController.php`
+
+Let's add the new route first in `routes/api.php`:
+
+```diff
++use App\Http\Controllers\AnnotationController;
+ use App\Http\Controllers\ImageController;
+
+ Route::middleware('auth:sanctum')->group(function () {
+     Route::post('images', [ImageController::class, 'store']);
++    Route::post('images/{id}/annotations', [AnnotationController::class, 'store']);
+```
+
+This route includes the hierarchy that annotations belong to an image. It starts with `image`, then includes the image ID and ends with `annotations` which can be translated to "annotations of image with ID `{id}`". The ID in the route will be automatically injected as an argument of the controller method. So let's move over to the AnnotationController. As before, we only need to keep the `store()` method and populate it:
+
+```php
+public function store(Request $request, $id)
+{
+    $image = Image::findOrFail($id);
+
+    $request->validate([
+        'x' => 'required|numeric|min:0',
+        'y' => 'required|numeric|min:0',
+        'label' => 'required|string|max:128',
+    ]);
+
+    return $image->annotations()->create($request->only(['x', 'y', 'label']));
+}
+```
+
+First, the image is fetched using the ID from the route. The `findOrFail()` method will automatically return a "not found" response if no image with the ID exists. The we validate the request parameters and finally create a new annotation using the relationship of the image.
+
+Now we need to update ImageController so the annotations of an image are returned as well (if there are any). This can be done quite conveniently with [eager loading](https://laravel.com/docs/9.x/eloquent-relationships#eager-loading) of the relationship:
+
+```diff
+- $image = $request->user()->images()->firstOrCreate([
+-     'hash' => $request->input('hash'),
+- ]);
++ $image = $request->user()
++     ->images()
++     ->with('annotations:id,x,y,label,image_id')
++     ->firstOrCreate(['hash' => $request->input('hash')]);
+```
+
+After this change you can run the tests with `./vendor/bin/phpunit` and see all but one test succeed. So what about the failing test? This is the one checking for authorization.
+
+### The Policy
+
+File: `app/Policies/ImagePolicy.php`
+
+Authorization of models is implemented with [policies](https://laravel.com/docs/9.x/authorization#creating-policies) in Laravel. A policy for the Image model can be generated using the helper command `php artisan make:policy -m Image ImagePolicy`. In this policy we want to define the ability of a user to "update" an image, i.e. add annotations to it. The helper command helpfully created a few empty methods in the policy file but we only have to keep the `update()` method.
+
+Before we actually implement the policy method, remember to write a test, first! This can be done in `tests/Models/ImageTest.php`:
+
+```diff
+ use App\Models\Image;
++use App\Models\User;
+```
+```php
+public function test_can_update()
+{
+    $user1 = User::factory()->create();
+    $user2 = User::factory()->create();
+    $image = Image::factory()->create(['user_id' => $user1->id]);
+
+    $this->assertTrue($user1->can('update', $image));
+    $this->assertFalse($user2->can('update', $image));
+}
+```
+
+Here you see one of the authorization methods in action, the `can()` method of a user, which takes the name of an ability and a model instance as arguments. Laravel will automagically determine the appropriate policy method.
+
+Now we can implement the `update()` method in `app/Policies/ImagePolicy.php`:
+
+```php
+public function update(User $user, Image $image)
+{
+    return $user->id === $image->user_id;
+}
+```
+
+Only the creator of an image is authorized to update it.
+
+We still have to implement the authorization in the `update()` method of the AnnotationController. This can be done with another convenient authorization method provided by Laravel:
+
+```diff
+  $image = Image::findOrFail($id);
++ $this->authorize('update', $image);
+```
+
+Now all the tests succeed!
+
+You may have noticed that even for a basic application like this one the tests begin to add up. You'll be thankful for this after a few months of development and maintenance!
 
 ## Annotation Display
 
@@ -714,7 +1023,7 @@ Next we add the OpenLayers overlay to the map and connect it to the HTML element
   },
 ```
 
-Finally we add some styling to the popup so it is positioned corectly to the right of the point annotation.
+Finally we add some styling to the popup so it is positioned correctly to the right of the point annotation.
 
 ```diff
   <style lang="scss" scoped>
@@ -744,7 +1053,7 @@ handleFeatureAdded(event) {
 }
 ```
 
-If a new annotation should be created but an old one is still pending, the old one is discarded (see below). Then the position of the popup overlay is updated to the position of the point annotation and the OpenLayers feature object is set as `pendingAnnotation`. Finally, the HTML input field of the popup is focussed so the user can start typing right away without having to click in the input field. This must be wrapped in a call of the Vue `$nextTick()` method because we have to wait one "Vue rendering cycle" for the popup to be displayed (`this.showPopup === true`) before calling `focus()` on the element works.
+If a new annotation should be created but an old one is still pending, the old one is discarded (see below). Then the position of the popup overlay is updated to the position of the point annotation and the OpenLayers feature object is set as `pendingAnnotation`. Finally, the HTML input field of the popup is focused so the user can start typing right away without having to click in the input field. This must be wrapped in a call of the Vue `$nextTick()` method because we have to wait one "Vue rendering cycle" for the popup to be displayed (`this.showPopup === true`) before calling `focus()` on the element works.
 
 ```js
 discardPendingAnnotation() {
