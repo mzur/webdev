@@ -1156,7 +1156,7 @@ And now `resources/js/components/ImageContainer.vue`:
  },
 ```
 
-Now these annotations must be drawn whenever a new image is displayed, which happens in the `updateImage()` method of the component. But first we need to import a few additional OpenLayers resources:
+These annotations must be drawn whenever a new image is displayed, which happens in the `updateImage()` method of the component. But first we need to import a few additional OpenLayers resources:
 
 ```diff
  import Draw from 'ol/interaction/Draw';
@@ -1183,14 +1183,16 @@ First, the vector source containing any annotations of a previous image is clear
 
 Done! 🏁 Congratulations, the image annotation tool is fully functional now!
 
-## Wrapping It Up
-
-- recap everything that was done
-
 ## Next Steps
 
-- next steps
-    - Display labels on hover
-    - Implement deleting of annotations
-    - Implement other annotation shapes
-    - contribute to BIIGLE
+You have now learned how to implement a basic web application for image annotation with Laravel and Vue.js. Do you feel ready for doing some coding on your own? Here are a few suggestions for additional features that can be implemented in the image annotation tool:
+
+- Label display: Show the label of an existing annotation in a popup when the mouse touches the annotation.
+
+- Deletion of annotations: Enable the OpenLayers select interaction and implement all features that are required to delete existing annotations again.
+
+- More annotation shapes: The OpenLayers draw interaction also supports circles, lines or polygons. Do you know how the backend and database have to be updated to support these shapes?
+
+**Contribute to BIIGLE:** Want to dig into a larger project? Incidentally, there is this image annotation tool called [BIIGLE](https://biigle.de) that uses the same technology stack that you have learned here and which is desperately looking for contributors. Take a look at the [contributing guide](https://github.com/biigle/core/blob/master/CONTRIBUTING.md) to get started.
+
+Thanks for reading this far! If you have any feedback or suggestions for improvements, please [open an issue](https://github.com/mzur/webdev/issues/new).
