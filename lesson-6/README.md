@@ -621,6 +621,8 @@ Schema::create('annotations', function (Blueprint $table) {
 });
 ```
 
+Don't forget to execute `php artisan migrate` to apply the migration to your database.
+
 ### The Model
 
 File: `app/Models/Annotation.php`
@@ -1106,13 +1108,89 @@ handleNewAnnotation(annotation) {
 
 This sends the annotation information to the annotations API we have implemented previously and event displays the loading spinner while doing so!
 
-- initialize annotations from DB in frontend
+On to the final leg of our journey!
+
+Here we implement the display of existing annotations when an image is first loaded. First, the annotations array that can be returned from the backend has to be stored in `resources/js/app.js`:
+
+```diff
+ data() {
+     return {
+         image: null,
+         imageId: null,
+         loading: false,
++        annotations: [],
+     };
+ },
+```
+```diff
+ handleImageLoaded(event) {
+     let hash = sha256(event.target.src).toString();
+     axios.post('api/images', {hash})
+-        .then(response => this.imageId = response.data.id)
++        .then(response => {
++            this.imageId = response.data.id;
++            this.annotations = response.data.annotations || [];
++        })
+```
+
+Note that we also need to handle the case that no annotations array is returned at all when the image was newly created. Next, we hook up these annotations as a new property of the ImageContainer component. Update `resources/views/home.blade.php`:
+
+```diff
+ <image-container
+     :image="image"
++    :annotations="annotations"
+     v-on:annotation="handleNewAnnotation"
+     ></image-container>
+```
+
+And now `resources/js/components/ImageContainer.vue`:
+
+```diff
+ props: {
+     image: {
+         type: Image,
+     },
++    annotations: {
++        type: Array,
++    },
+ },
+```
+
+Now these annotations must be drawn whenever a new image is displayed, which happens in the `updateImage()` method of the component. But first we need to import a few additional OpenLayers resources:
+
+```diff
+ import Draw from 'ol/interaction/Draw';
++import Feature from 'ol/Feature';
+ import ImageLayer from 'ol/layer/Image';
+ import ImageStatic from 'ol/source/ImageStatic';
+ import Map from 'ol/Map';
+ import Overlay from 'ol/Overlay';
++import Point from 'ol/geom/Point';
+```
+
+Then we can extend the `updateImage()` method with:
+
+```js
+vectorSource.clear();
+vectorSource.un('addfeature', this.handleFeatureAdded);
+vectorSource.addFeatures(this.annotations.map(annotation => {
+    return new Feature(new Point([annotation.x, annotation.y]));
+}));
+vectorSource.on('addfeature', this.handleFeatureAdded);
+```
+
+First, the vector source containing any annotations of a previous image is cleared. Then we disable the `addfeature` event listener because we don't want this event to be handled while we add the initial annotations. Then we actually create the OpenLayers point features from the annotation objects and fill the vector source with them. Finally, the `addfeature` event listener is activated again.
+
+Done! 🏁 Congratulations, the image annotation tool is fully functional now!
 
 ## Wrapping It Up
 
 - recap everything that was done
 
+## Next Steps
+
 - next steps
+    - Display labels on hover
     - Implement deleting of annotations
     - Implement other annotation shapes
     - contribute to BIIGLE
