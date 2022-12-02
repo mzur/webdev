@@ -2,7 +2,9 @@
 
 In this final lesson we will implement a basic image annotation tool. It will work like this: Users can open a local image and explore the image interactively. They can place point annotations on the image which are automatically saved in the database. Whenever the user opens the same image again, the annotations are loaded and displayed.
 
-**TODO: MP4 demo screencast**
+Here is what it will look like in the end:
+
+https://user-images.githubusercontent.com/2457311/205314421-8f8e3635-5135-441d-9beb-32b01d8526df.mp4
 
 ## Project Setup
 
