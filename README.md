@@ -8,11 +8,11 @@ Please work through the lessons in order, as each lesson builds upon the previou
 
 All instructions are written to be performed on a Linux command line (e.g. Ubuntu). They should also work fine on a Mac. If you use Windows, you could try to use the [WSL](https://docs.microsoft.com/en-us/windows/wsl/install).
 
-The practical lessons require PHP >=8.2 as well as the Composer and NPM package managers installed on your system. To install them on Ubuntu 22.04, run:
+The practical lessons require PHP >=8.1 as well as the Composer and NPM package managers installed on your system. To install them on Ubuntu 22.04, run:
 
 ```
 sudo apt update
-sudo apt install php-cli php-sqlite3 composer npm
+sudo apt install --no-install-recommends php-cli php-xml php-mbstring php-curl php-sqlite3 composer npm unzip
 ```
 
 ## Lessons
