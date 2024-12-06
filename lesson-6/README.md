@@ -297,13 +297,13 @@ Now you have a  fully functional client-side image viewer already. Go ahead and 
 
 When we want to store image annotations in the database later, we also need a database table for the images to which the annotations belong. We will keep it simple here and don't implement anything like a file upload and serving of the image files from the backend. Instead, the images are only opened locally, as was already implemented in the previous section. Each newly opened image file is identified by it's [SHA256](https://en.wikipedia.org/wiki/SHA-2) file hash. This way, we can fetch the annotations for a given image whenever the file is opened.
 
-Database interactions in Laravel are done mostly through the [Eloquent](https://laravel.com/docs/9.x/eloquent) object-relational mapper (ORM). This mechanism maps database tables to PHP classes (called "models") and entries in the tables to PHP objects. We will now create a new Image model by executing `php artisan make:model -cfmr Image`, which is a convenient helper command provided by Laravel. This command will create several files which we will now step through in order to implement the new Image model.
+Database interactions in Laravel are done mostly through the [Eloquent](https://laravel.com/docs/eloquent) object-relational mapper (ORM). This mechanism maps database tables to PHP classes (called "models") and entries in the tables to PHP objects. We will now create a new Image model by executing `php artisan make:model -cfmr Image`, which is a convenient helper command provided by Laravel. This command will create several files which we will now step through in order to implement the new Image model.
 
 ### The Migration
 
 File: `database/migrations/xxxx_xx_xx_xxxxxx_create_images_table.php`
 
-The [migration](https://laravel.com/docs/9.x/migrations) defines the changes to the database that are required for the new model (i.e. creating a new table). This file will have a unique timestamp as prefix because it is essential that multiple migration files are executed in the correct order. Each migration has an `up()` method that applies the changes to the database and a `down()` method which reverts all the changes. These are already filled by the helper command to create and drop a new database table, respectively. We only need to extend the `up()` method:
+The [migration](https://laravel.com/docs/migrations) defines the changes to the database that are required for the new model (i.e. creating a new table). This file will have a unique timestamp as prefix because it is essential that multiple migration files are executed in the correct order. Each migration has an `up()` method that applies the changes to the database and a `down()` method which reverts all the changes. These are already filled by the helper command to create and drop a new database table, respectively. We only need to extend the `up()` method:
 
 ```php
 Schema::create('images', function (Blueprint $table) {
@@ -337,9 +337,9 @@ This file defines special properties of the Image model that are used by the Elo
 protected $fillable = ['hash'];
 ```
 
-This is required in order to use the convenient `create()` method of an Eloquent model later on ([here are the details](https://laravel.com/docs/9.x/eloquent#mass-assignment)).
+This is required in order to use the convenient `create()` method of an Eloquent model later on ([here are the details](https://laravel.com/docs/eloquent#mass-assignment)).
 
-We also update the existing User model with a new [relationship](https://laravel.com/docs/9.x/eloquent-relationships) in `app/Models/User.php`:
+We also update the existing User model with a new [relationship](https://laravel.com/docs/eloquent-relationships) in `app/Models/User.php`:
 
 ```php
 /**
@@ -359,7 +359,7 @@ This relationship can be used to conveniently fetch all images of a user.
 
 File: `database/factories/ImageFactory.php`
 
-A [model factory](https://laravel.com/docs/9.x/eloquent-factories) defines a method to create new instances of the Image model that contain fake data (for testing). This file is also conveniently filled by the helper command and we only have to add content to the `definition()` method:
+A [model factory](https://laravel.com/docs/eloquent-factories) defines a method to create new instances of the Image model that contain fake data (for testing). This file is also conveniently filled by the helper command and we only have to add content to the `definition()` method:
 
 ```php
 return [
@@ -515,7 +515,7 @@ public function store(Request $request)
 }
 ```
 
-First, we [validate](https://laravel.com/docs/9.x/validation#main-content) the request to make sure that a `hash` is provided and the hash has the correct format. If the validation fails, an error message will be returned. Next, `firstOrCreate()` is used to create a new image as part of the images that belong to the current user *or* the image will be fetched from the database if it already exists with the same hash. Then we "hide" all the attributes of the image that are irrelevant for the response. In this case we are only interested in the image ID. Finally, the Image instance is returned. This object will be automatically converted to a JSON response by Laravel.
+First, we [validate](https://laravel.com/docs/validation#main-content) the request to make sure that a `hash` is provided and the hash has the correct format. If the validation fails, an error message will be returned. Next, `firstOrCreate()` is used to create a new image as part of the images that belong to the current user *or* the image will be fetched from the database if it already exists with the same hash. Then we "hide" all the attributes of the image that are irrelevant for the response. In this case we are only interested in the image ID. Finally, the Image instance is returned. This object will be automatically converted to a JSON response by Laravel.
 
 Before the controller actually works, a new route must be configured for it in `routes/api.php`:
 
@@ -851,7 +851,7 @@ public function store(Request $request, $id)
 
 First, the image is fetched using the ID from the route. The `findOrFail()` method will automatically return a "not found" response if no image with the ID exists. The we validate the request parameters and finally create a new annotation using the relationship of the image.
 
-Now we need to update ImageController so the annotations of an image are returned as well (if there are any). This can be done quite conveniently with [eager loading](https://laravel.com/docs/9.x/eloquent-relationships#eager-loading) of the relationship:
+Now we need to update ImageController so the annotations of an image are returned as well (if there are any). This can be done quite conveniently with [eager loading](https://laravel.com/docs/eloquent-relationships#eager-loading) of the relationship:
 
 ```diff
 - $image = $request->user()->images()->firstOrCreate([
@@ -869,7 +869,7 @@ After this change you can run the tests with `./vendor/bin/phpunit` and see all 
 
 File: `app/Policies/ImagePolicy.php`
 
-Authorization of models is implemented with [policies](https://laravel.com/docs/9.x/authorization#creating-policies) in Laravel. A policy for the Image model can be generated using the helper command `php artisan make:policy -m Image ImagePolicy`. In this policy we want to define the ability of a user to "update" an image, i.e. add annotations to it. The helper command helpfully created a few empty methods in the policy file but we only have to keep the `update()` method.
+Authorization of models is implemented with [policies](https://laravel.com/docs/authorization#creating-policies) in Laravel. A policy for the Image model can be generated using the helper command `php artisan make:policy -m Image ImagePolicy`. In this policy we want to define the ability of a user to "update" an image, i.e. add annotations to it. The helper command helpfully created a few empty methods in the policy file but we only have to keep the `update()` method.
 
 Before we actually implement the policy method, remember to write a test, first! This can be done in `tests/Models/ImageTest.php`:
 
