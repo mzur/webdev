@@ -8,10 +8,11 @@ Now we will start to set up a new Laravel project and the basic user interface s
 
 ## Project Setup
 
-The setup of a new Laravel project requires the Composer PHP package manager that you should have installed as part of the [preparations](/#preparation) for these lessons. All you need to do is to run this command:
+The setup of a new Laravel project requires the Composer PHP package manager that you should have installed as part of the [preparations](/#preparation) for these lessons. All you need to do is to run these commands:
 
 ```bash
 composer create-project laravel/laravel example-app
+php artisan install:api
 ```
 
 Now a new Laravel project is installed in the `example-app` directory. Go ahead and enter the directory. Before we can start, one line must be updated in the `.env` file:
@@ -20,10 +21,7 @@ Now a new Laravel project is installed in the `example-app` directory. Go ahead 
 - APP_URL=http://localhost
 + APP_URL=http://localhost:8000
 ```
-For recreating Lesson 3 we need a stateless API, for that we want to install the api with the following command.
-```bash
-php artisan install:api
-```
+
 Now you can run `php artisan serve` which will start the PHP development server for the project. Visit <http://localhost:8000> and Laravel should show you the default start page.
 
 ## User Interface Scaffolding
@@ -124,8 +122,9 @@ Route::middleware('auth:sanctum')->get('/quote', [App\Http\Controllers\Api\Quote
 The `auth:sanctum` [middleware](https://laravel.com/docs/middleware) makes sure that the user is authenticated (i.e. providing an API token), so this route can only be used by registered users. In order to also allow logged-in users to access the route (without API token), we have to enable a middleware in `bootstrap/app.php`:
 
 ```diff
-->withMiddleware(function (Middleware $middleware) {
-+ $middleware->statefulApi();
+ ->withMiddleware(function (Middleware $middleware) {
++    $middleware->statefulApi();
+ })
 ```
 
 The new route is defined to listen to [`GET` requests](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods) at the `/api/quote` URL (the `api` prefix is automatically added for all routes in `api.php`) and to process these requests in the `get()` method of a `QuoteController`. Let's continue to create this controller as `app/Http/Controllers/Api/QuoteController.php`:
