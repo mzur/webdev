@@ -532,8 +532,9 @@ Route::middleware('auth:sanctum')->group(function () {
 This route uses the `auth:sanctum` middleware again to make sure that the user is authenticated. As in the previous lesson, we have to enable the appropriate middleware to also allow authentication via log-in through the browser in `bootstrap/app.php`:
 
 ```diff
-->withMiddleware(function (Middleware $middleware) {
-+ $middleware->statefulApi();
+ ->withMiddleware(function (Middleware $middleware) {
++    $middleware->statefulApi();
+ })
 ```
 
 Now execute `./vendor/bin/phpunit` again to see your tests succeed!
