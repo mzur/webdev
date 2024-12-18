@@ -529,11 +529,12 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 ```
 
-This route uses the `auth:sanctum` middleware again to make sure that the user is authenticated. As in the previous lesson, we have to enable the appropriate middleware to also allow authentication via log-in through the browser in `app/Http/Kernel.php`:
+This route uses the `auth:sanctum` middleware again to make sure that the user is authenticated. As in the previous lesson, we have to enable the appropriate middleware to also allow authentication via log-in through the browser in `bootstrap/app.php`:
 
 ```diff
-- // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
-+ \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+ ->withMiddleware(function (Middleware $middleware) {
++    $middleware->statefulApi();
+ })
 ```
 
 Now execute `./vendor/bin/phpunit` again to see your tests succeed!
